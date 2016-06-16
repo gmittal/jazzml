@@ -222,55 +222,55 @@ class ChordDetector:
     	# major
     	if (chordindex < 12):
     		ChordDetector.rootNote = chordindex;
-    		ChordDetector.quality = 'maj';
+    		ChordDetector.quality = ChordDetector.ChordQuality.index('Major');
     		ChordDetector.intervals = 0;
 
     	# minor
     	if ((chordindex >= 12) and (chordindex < 24)):
     		ChordDetector.rootNote = chordindex-12;
-    		ChordDetector.quality = 'min';
+    		ChordDetector.quality = ChordDetector.ChordQuality.index('Minor');
     		ChordDetector.intervals = 0;
 
     	# diminished 5th
     	if ((chordindex >= 24) and (chordindex < 36)):
     		ChordDetector.rootNote = chordindex-24;
-    		ChordDetector.quality = '-';
+    		ChordDetector.quality = ChordDetector.ChordQuality.index('Diminished5th');
     		ChordDetector.intervals = 0;
 
     	# augmented 5th
     	if ((chordindex >= 36) and (chordindex < 48)):
     		ChordDetector.rootNote = chordindex-36;
-    		ChordDetector.quality = '+';
+    		ChordDetector.quality = ChordDetector.ChordQuality.index('Augmented5th');
     		ChordDetector.intervals = 0;
 
     	# sus2
     	if ((chordindex >= 48) and (chordindex < 60)):
     		ChordDetector.rootNote = chordindex-48;
-    		ChordDetector.quality = 'sus';
+    		ChordDetector.quality = ChordDetector.ChordQuality.index('Suspended');
     		ChordDetector.intervals = 2;
 
     	# sus4
     	if ((chordindex >= 60) and (chordindex < 72)):
     		ChordDetector.rootNote = chordindex-60;
-    		ChordDetector.quality = 'sus';
+    		ChordDetector.quality = ChordDetector.ChordQuality.index('Suspended');
     		ChordDetector.intervals = 4;
 
     	# major 7th
     	if ((chordindex >= 72) and (chordindex < 84)):
     		ChordDetector.rootNote = chordindex-72;
-    		ChordDetector.quality = 'maj';
+    		ChordDetector.quality = ChordDetector.ChordQuality.index('Major');
     		ChordDetector.intervals = 7;
 
     	# minor 7th
     	if ((chordindex >= 84) and (chordindex < 96)):
     		ChordDetector.rootNote = chordindex-84;
-    		ChordDetector.quality = 'min';
+    		ChordDetector.quality = ChordDetector.ChordQuality.index('Minor');
     		ChordDetector.intervals = 7;
 
     	# dominant 7th
     	if ((chordindex >= 96) and (chordindex < 108)):
     		ChordDetector.rootNote = chordindex-96;
-    		ChordDetector.quality = '';
+    		ChordDetector.quality = ChordDetector.ChordQuality.index('Dominant');
     		ChordDetector.intervals = 7;
 
     #=======================================================================
