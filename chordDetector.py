@@ -2,7 +2,7 @@ from __future__ import division
 import math
 
 class ChordDetector:
-    ChordQuality = ["min", "maj", "sus", "", "-", "+"]
+    ChordQuality = ["Minor", "Major", "Suspended", "Dominant", "Diminished5th", "Augmented5th"]
     bias = 1.06
     rootNote = 0
     quality = ""
@@ -32,9 +32,6 @@ class ChordDetector:
         	v1 = 1
         	v2 = 1;
         	v3 = 1;
-
-
-
         	j = 0;
 
         	# major chords
