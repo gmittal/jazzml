@@ -2,15 +2,22 @@ from __future__ import division
 import math
 
 class ChordDetector:
+    ChordQuality = ["min", "maj", "sus", "", "-", "+"]
+    bias = 1.06
+    rootNote = 0
+    quality = ""
+    intervals = 0
+    chromagram = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    chordProfiles = []
+    chord = [0]*108
+
+    for j in range(0, 108):
+        tmp = [];
+        for t in range(0, 12):
+            tmp.append(0)
+        chordProfiles.append(tmp)
+
     def __init__(self):
-        self.ChordQuality = ["Minor", "Major", "Suspended", "Dominant", "Diminshed5th", "Augmented5th"]
-        self.bias = 1.06
-        self.rootNote = 0
-        self.quality = ""
-        self.intervals = 0
-        self.chromagram = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-        self.chordProfiles = [[0]*12]*108
-        self.chord = [0]*108
         self.makechordProfiles()
 
     def makechordProfiles(self):
@@ -26,11 +33,7 @@ class ChordDetector:
         	v2 = 1;
         	v3 = 1;
 
-        	# for j in range(0, 108):
-            #     tmp = [];
-            #     for t in range(0, 12):
-        	# 		tmp.append(0)
-            #     self.chordProfiles.append(tmp)
+
 
         	j = 0;
 
@@ -40,9 +43,9 @@ class ChordDetector:
         		third = (i+4) % 12;
         		fifth = (i+7) % 12;
 
-        		self.chordProfiles[j][root] = v1;
-        		self.chordProfiles[j][third] = v2;
-        		self.chordProfiles[j][fifth] = v3;
+        		ChordDetector.chordProfiles[j][root] = v1;
+        		ChordDetector.chordProfiles[j][third] = v2;
+        		ChordDetector.chordProfiles[j][fifth] = v3;
 
         		j+=1;
 
@@ -52,9 +55,9 @@ class ChordDetector:
         		third = (i+3) % 12;
         		fifth = (i+7) % 12;
 
-        		self.chordProfiles[j][root] = v1;
-        		self.chordProfiles[j][third] = v2;
-        		self.chordProfiles[j][fifth] = v3;
+        		ChordDetector.chordProfiles[j][root] = v1;
+        		ChordDetector.chordProfiles[j][third] = v2;
+        		ChordDetector.chordProfiles[j][fifth] = v3;
 
         		j+=1;
 
@@ -65,9 +68,9 @@ class ChordDetector:
         		third = (i+3) % 12;
         		fifth = (i+6) % 12;
 
-        		self.chordProfiles[j][root] = v1;
-        		self.chordProfiles[j][third] = v2;
-        		self.chordProfiles[j][fifth] = v3;
+        		ChordDetector.chordProfiles[j][root] = v1;
+        		ChordDetector.chordProfiles[j][third] = v2;
+        		ChordDetector.chordProfiles[j][fifth] = v3;
 
         		j+=1;
 
@@ -78,9 +81,9 @@ class ChordDetector:
         		third = (i+4) % 12;
         		fifth = (i+8) % 12;
 
-        		self.chordProfiles[j][root] = v1;
-        		self.chordProfiles[j][third] = v2;
-        		self.chordProfiles[j][fifth] = v3;
+        		ChordDetector.chordProfiles[j][root] = v1;
+        		ChordDetector.chordProfiles[j][third] = v2;
+        		ChordDetector.chordProfiles[j][fifth] = v3;
 
         		j+=1;
 
@@ -90,9 +93,9 @@ class ChordDetector:
         		third = (i+2) % 12;
         		fifth = (i+7) % 12;
 
-        		self.chordProfiles[j][root] = v1;
-        		self.chordProfiles[j][third] = v2;
-        		self.chordProfiles[j][fifth] = v3;
+        		ChordDetector.chordProfiles[j][root] = v1;
+        		ChordDetector.chordProfiles[j][third] = v2;
+        		ChordDetector.chordProfiles[j][fifth] = v3;
 
         		j+=1;
 
@@ -102,9 +105,9 @@ class ChordDetector:
         		third = (i+5) % 12;
         		fifth = (i+7) % 12;
 
-        		self.chordProfiles[j][root] = v1;
-        		self.chordProfiles[j][third] = v2;
-        		self.chordProfiles[j][fifth] = v3;
+        		ChordDetector.chordProfiles[j][root] = v1;
+        		ChordDetector.chordProfiles[j][third] = v2;
+        		ChordDetector.chordProfiles[j][fifth] = v3;
 
         		j+=1;
 
@@ -115,10 +118,10 @@ class ChordDetector:
         		fifth = (i+7) % 12;
         		seventh = (i+11) % 12;
 
-        		self.chordProfiles[j][root] = v1;
-        		self.chordProfiles[j][third] = v2;
-        		self.chordProfiles[j][fifth] = v3;
-        		self.chordProfiles[j][seventh] = v3;
+        		ChordDetector.chordProfiles[j][root] = v1;
+        		ChordDetector.chordProfiles[j][third] = v2;
+        		ChordDetector.chordProfiles[j][fifth] = v3;
+        		ChordDetector.chordProfiles[j][seventh] = v3;
 
         		j+=1;
 
@@ -129,10 +132,10 @@ class ChordDetector:
         		fifth = (i+7) % 12;
         		seventh = (i+10) % 12;
 
-        		self.chordProfiles[j][root] = v1;
-        		self.chordProfiles[j][third] = v2;
-        		self.chordProfiles[j][fifth] = v3;
-        		self.chordProfiles[j][seventh] = v3;
+        		ChordDetector.chordProfiles[j][root] = v1;
+        		ChordDetector.chordProfiles[j][third] = v2;
+        		ChordDetector.chordProfiles[j][fifth] = v3;
+        		ChordDetector.chordProfiles[j][seventh] = v3;
 
         		j+=1;
 
@@ -144,22 +147,22 @@ class ChordDetector:
         		fifth = (i+7) % 12;
         		seventh = (i+10) % 12;
 
-        		self.chordProfiles[j][root] = v1;
-        		self.chordProfiles[j][third] = v2;
-        		self.chordProfiles[j][fifth] = v3;
-        		self.chordProfiles[j][seventh] = v3;
+        		ChordDetector.chordProfiles[j][root] = v1;
+        		ChordDetector.chordProfiles[j][third] = v2;
+        		ChordDetector.chordProfiles[j][fifth] = v3;
+        		ChordDetector.chordProfiles[j][seventh] = v3;
 
         		j+=1;
 
-            # print self.chordProfiles
+            # print ChordDetector.chordProfiles
 
     #=======================================================================
     def detectChord(self, chroma):
     	for i in range(0, 12):
-    		self.chromagram[i] = chroma[i];
+    		ChordDetector.chromagram[i] = chroma[i];
 
         # print chromagram
-    	self.classifyChromagram(); print self.rootNote, self.quality, self.intervals;
+    	self.classifyChromagram();
 
 
 
@@ -169,109 +172,109 @@ class ChordDetector:
     	i = int()
     	j = int()
     	fifth = int()
-    	chordindex = int(); print self.chromagram
+    	chordindex = int(); #print ChordDetector.chromagram
 
 
-    	# remove some of the 5th note energy from chromagram
+    	# remove some of the 5th note energy from ChordDetector.chromagram
     	for i in range(0, 12):
     		fifth = (i+7) % 12;
-    		self.chromagram[fifth] = self.chromagram[fifth] - (0.1*self.chromagram[i]);
+    		ChordDetector.chromagram[fifth] = ChordDetector.chromagram[fifth] - (0.1*ChordDetector.chromagram[i]);
 
-    		if (self.chromagram[fifth] < 0):
-    			self.chromagram[fifth] = 0;
+    		if (ChordDetector.chromagram[fifth] < 0):
+    			ChordDetector.chromagram[fifth] = 0;
 
 
     	# major chords
     	for j in range(0, 12):
-    		self.chord[j] = self.calculateChordScore(self.chromagram,self.chordProfiles[j],self.bias,3);
+    		ChordDetector.chord[j] = self.calculateChordScore(ChordDetector.chromagram,ChordDetector.chordProfiles[j],ChordDetector.bias,3);
 
     	# minor chords
     	for j in range(12, 24):
-    		self.chord[j] = self.calculateChordScore(self.chromagram,self.chordProfiles[j],self.bias,3);
+    		ChordDetector.chord[j] = self.calculateChordScore(ChordDetector.chromagram,ChordDetector.chordProfiles[j],ChordDetector.bias,3);
 
     	# diminished 5th chords
     	for j in range(24, 36):
-    		self.chord[j] = self.calculateChordScore(self.chromagram,self.chordProfiles[j],self.bias,3);
+    		ChordDetector.chord[j] = self.calculateChordScore(ChordDetector.chromagram,ChordDetector.chordProfiles[j],ChordDetector.bias,3);
 
     	# augmented 5th chords
     	for j in range(36, 48):
-    		self.chord[j] = self.calculateChordScore(self.chromagram,self.chordProfiles[j],self.bias,3);
+    		ChordDetector.chord[j] = self.calculateChordScore(ChordDetector.chromagram,ChordDetector.chordProfiles[j],ChordDetector.bias,3);
 
     	# sus2 chords
     	for j in range(48, 60):
-    		self.chord[j] = self.calculateChordScore(self.chromagram,self.chordProfiles[j],1,3);
+    		ChordDetector.chord[j] = self.calculateChordScore(ChordDetector.chromagram,ChordDetector.chordProfiles[j],1,3);
 
     	# sus4 chords
     	for j in range(60, 72):
-    		self.chord[j] = self.calculateChordScore(self.chromagram,self.chordProfiles[j],1,3);
+    		ChordDetector.chord[j] = self.calculateChordScore(ChordDetector.chromagram,ChordDetector.chordProfiles[j],1,3);
 
     	# major 7th chords
     	for j in range(72, 84):
-    		self.chord[j] = self.calculateChordScore(self.chromagram,self.chordProfiles[j],1,4);
+    		ChordDetector.chord[j] = self.calculateChordScore(ChordDetector.chromagram,ChordDetector.chordProfiles[j],1,4);
 
     	# minor 7th chords
     	for j in range(84, 96):
-    		self.chord[j] = self.calculateChordScore(self.chromagram,self.chordProfiles[j],self.bias,4);
+    		ChordDetector.chord[j] = self.calculateChordScore(ChordDetector.chromagram,ChordDetector.chordProfiles[j],ChordDetector.bias,4);
 
     	# dominant 7th chords
     	for j in range(96, 108):
-    		self.chord[j] = self.calculateChordScore(self.chromagram,self.chordProfiles[j],self.bias,4);
+    		ChordDetector.chord[j] = self.calculateChordScore(ChordDetector.chromagram,ChordDetector.chordProfiles[j],ChordDetector.bias,4);
 
-    	chordindex = self.minimumIndex(self.chord,108);
+    	chordindex = self.minimumIndex(ChordDetector.chord,108);
 
     	# major
     	if (chordindex < 12):
-    		self.rootNote = chordindex;
-    		self.quality = 'Major';
-    		self.intervals = 0;
+    		ChordDetector.rootNote = chordindex;
+    		ChordDetector.quality = 'maj';
+    		ChordDetector.intervals = 0;
 
     	# minor
     	if ((chordindex >= 12) and (chordindex < 24)):
-    		self.rootNote = chordindex-12;
-    		self.quality = 'Minor';
-    		self.intervals = 0;
+    		ChordDetector.rootNote = chordindex-12;
+    		ChordDetector.quality = 'min';
+    		ChordDetector.intervals = 0;
 
     	# diminished 5th
     	if ((chordindex >= 24) and (chordindex < 36)):
-    		self.rootNote = chordindex-24;
-    		self.quality = 'Dimished5th';
-    		self.intervals = 0;
+    		ChordDetector.rootNote = chordindex-24;
+    		ChordDetector.quality = '-';
+    		ChordDetector.intervals = 0;
 
     	# augmented 5th
     	if ((chordindex >= 36) and (chordindex < 48)):
-    		self.rootNote = chordindex-36;
-    		self.quality = 'Augmented5th';
-    		self.intervals = 0;
+    		ChordDetector.rootNote = chordindex-36;
+    		ChordDetector.quality = '+';
+    		ChordDetector.intervals = 0;
 
     	# sus2
     	if ((chordindex >= 48) and (chordindex < 60)):
-    		self.rootNote = chordindex-48;
-    		self.quality = 'Suspended';
-    		self.intervals = 2;
+    		ChordDetector.rootNote = chordindex-48;
+    		ChordDetector.quality = 'sus';
+    		ChordDetector.intervals = 2;
 
     	# sus4
     	if ((chordindex >= 60) and (chordindex < 72)):
-    		self.rootNote = chordindex-60;
-    		self.quality = 'Suspended';
-    		self.intervals = 4;
+    		ChordDetector.rootNote = chordindex-60;
+    		ChordDetector.quality = 'sus';
+    		ChordDetector.intervals = 4;
 
     	# major 7th
     	if ((chordindex >= 72) and (chordindex < 84)):
-    		self.rootNote = chordindex-72;
-    		self.quality = 'Major';
-    		self.intervals = 7;
+    		ChordDetector.rootNote = chordindex-72;
+    		ChordDetector.quality = 'maj';
+    		ChordDetector.intervals = 7;
 
     	# minor 7th
     	if ((chordindex >= 84) and (chordindex < 96)):
-    		self.rootNote = chordindex-84;
-    		self.quality = 'Minor';
-    		self.intervals = 7;
+    		ChordDetector.rootNote = chordindex-84;
+    		ChordDetector.quality = 'min';
+    		ChordDetector.intervals = 7;
 
     	# dominant 7th
     	if ((chordindex >= 96) and (chordindex < 108)):
-    		self.rootNote = chordindex-96;
-    		self.quality = 'Dominant';
-    		self.intervals = 7; print self.rootNote, self.quality, self.intervals
+    		ChordDetector.rootNote = chordindex-96;
+    		ChordDetector.quality = '';
+    		ChordDetector.intervals = 7;
 
     #=======================================================================
     def calculateChordScore(self, chroma,chordProfile,biasToUse,N):
