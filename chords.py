@@ -7,7 +7,7 @@ class ChordDetector:
     rootNote = 0
     quality = ""
     intervals = 0
-    chromagram = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    chromagram = [0]*12
     chordProfiles = []
     chord = [0]*108
 
