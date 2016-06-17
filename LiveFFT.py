@@ -186,7 +186,12 @@ class LiveFFTWidget(QtGui.QWidget):
             # get 12x1 chroma vector with respective energies for each note
             chroma = chromagram.calculateChromagram(self.freq_vect, np.abs(np.fft.rfft(current_frame)))
             chordFinder.detectChord(chroma)
-            chordString = str(chordRoots[chordFinder.rootNote]) + str(chordQualities[chordFinder.quality]) + str(chordFinder.intervals)
+
+            chordString = ""
+            if chordFinder.intervals > 0:
+                chordString = str(chordRoots[chordFinder.rootNote]) + str(chordQualities[chordFinder.quality]) + str(chordFinder.intervals)
+            else:
+                chordString = str(chordRoots[chordFinder.rootNote]) + str(chordQualities[chordFinder.quality])
             print chordString
 
             # plots the time signal
