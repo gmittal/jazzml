@@ -178,7 +178,7 @@ class LiveFFTWidget(QtGui.QWidget):
             print self.freq_vect.shape
             # print np.abs(np.fft.rfft(current_frame)) # CURRENT SOUND VECTOR with all frequencies
 
-            chromagram.calculateChromagram(self.freq_vect, np.abs(np.fft.rfft(current_frame)))
+            print chromagram.calculateChromagram(self.freq_vect, np.abs(np.fft.rfft(current_frame)))
 
             # plots the time signal
             self.line_top.set_data(self.time_vect, current_frame)

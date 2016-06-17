@@ -3,15 +3,15 @@ import math
 
 samplingFrequency = 2000
 bufferSize = 1024
-referenceFrequency = 130.81278265
+referenceFrequency = 130.81278265 # C
 numHarmonics = 2
-numOctaves = 2
+numOctaves = 4
 numBinsToSearch = 2
 noteFrequencies = []
 chromagram = [0.0000000000000000000]*12
 
 for i in range(0, 12):
-    noteFrequencies.append(referenceFrequency*math.pow(12, i/12))
+    noteFrequencies.append(referenceFrequency*math.pow(2, i/12))
 
 print noteFrequencies
 # take a frequency vector and then the audio values for each of those frequencies
