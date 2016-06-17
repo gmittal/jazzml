@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Created on May 23 2014
 
-@author: florian
-"""
 import sys
 import threading
 import atexit
@@ -13,9 +9,8 @@ import matplotlib.pyplot as plt
 from PyQt4 import QtGui, QtCore
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as NavigationToolbar
+import chromagram
 
-# class taken from the SciPy 2015 Vispy talk opening example
-# see https://github.com/vispy/vispy/pull/928
 class MicrophoneRecorder(object):
     def __init__(self, rate=100000, chunksize=1024):
         self.rate = rate
@@ -169,11 +164,15 @@ class LiveFFTWidget(QtGui.QWidget):
         if len(frames) > 0:
             # keeps only the last frame
             current_frame = frames[-1]
+            rounded_freq_vec = []
+            for x in range(0, len(self.freq_vect)):
+                rounded_freq_vec.append(round(self.freq_vect[x]))
 
+            
+            # print self.freq_vect.shape
+            # print np.abs(np.fft.rfft(current_frame)) # CURRENT SOUND VECTOR with all frequencies
 
-            print np.abs(np.fft.rfft(current_frame)) # CURRENT SOUND VECTOR with all frequencies
-
-
+            print chromagram.calculateChromagram(self.freq_vect, np.abs(np.fft.rfft(current_frame)))
 
             # plots the time signal
             self.line_top.set_data(self.time_vect, current_frame)

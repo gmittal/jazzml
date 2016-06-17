@@ -1,7 +1,7 @@
 from __future__ import division
 import math
 
-sampleFrequency = 4096
+samplingFrequency = 4096
 bufferSize = 8192
 referenceFrequency = 130.81278265
 numHarmonics = 2
@@ -11,7 +11,7 @@ noteFrequencies = []
 chromagram = [0.0]*12
 
 for i in range(0, 12):
-    noteFrequencies[i] = referenceFrequency*math.pow(12, i/12)
+    noteFrequencies.append(referenceFrequency*math.pow(12, i/12))
 
 # take a frequency vector and then the audio values for each of those frequencies
 def calculateChromagram(freq, m):
@@ -21,13 +21,13 @@ def calculateChromagram(freq, m):
         for octave in range(1, numOctaves):
             noteSum = 0.0
             for harmonic in range(1, numHarmonics):
-                int centerBin = math.round((noteFrequencies[n]*octave*harmonic)/divisorRatio)
-                int minBin = centerBin - (numBinsToSearch*harmonic)
-                int maxBin = centerBin + (numBinsToSearch*harmonic)
+                centerBin = round((noteFrequencies[n]*octave*harmonic)/divisorRatio)
+                minBin = centerBin - (numBinsToSearch*harmonic)
+                maxBin = centerBin + (numBinsToSearch*harmonic)
 
                 maxVal = 0.0
 
-                for k in range(minBin, maxBin):
+                for k in range(int(minBin), int(maxBin)):
                     if (m[k] > maxVal):
                         maxVal = m[k]
 
