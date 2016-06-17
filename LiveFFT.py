@@ -171,7 +171,7 @@ class LiveFFTWidget(QtGui.QWidget):
             current_frame = frames[-1]
 
 
-            print np.abs(np.fft.rfft(current_frame)).shape # CURRENT SOUND VECTOR with all frequencies
+            print np.abs(np.fft.rfft(current_frame)) # CURRENT SOUND VECTOR with all frequencies
 
 
 
