@@ -10,6 +10,9 @@ from PyQt4 import QtGui, QtCore
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as NavigationToolbar
 import chromagram
+import chords
+
+chordFinder = chords.ChordDetector()
 
 class MicrophoneRecorder(object):
     def __init__(self, rate=2000, chunksize=1024):
@@ -166,7 +169,7 @@ class LiveFFTWidget(QtGui.QWidget):
         if len(frames) > 0:
             # keeps only the last frame
             current_frame = frames[-1]
-            print current_frame
+            # print current_frame
             # rounded_freq_vec = []
             # for x in range(0, len(self.freq_vect)):
             #     rounded_freq_vec.append(round(self.freq_vect[x]))
@@ -175,10 +178,12 @@ class LiveFFTWidget(QtGui.QWidget):
             # for i in range(0, len(rounded_freq_vec)):
             #     diff = rounded_freq_vec[i]-rounded_freq_vec[i-1]
 
-            print self.freq_vect.shape
+            # print self.freq_vect.shape
             # print np.abs(np.fft.rfft(current_frame)) # CURRENT SOUND VECTOR with all frequencies
 
-            print chromagram.calculateChromagram(self.freq_vect, np.abs(np.fft.rfft(current_frame)))
+            chroma = chromagram.calculateChromagram(self.freq_vect, np.abs(np.fft.rfft(current_frame)))
+            chordFinder.detectChord(chroma)
+            print chordFinder.rootNote
 
             # plots the time signal
             self.line_top.set_data(self.time_vect, current_frame)
