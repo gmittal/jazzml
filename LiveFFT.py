@@ -13,6 +13,8 @@ import chromagram
 import chords
 
 chordFinder = chords.ChordDetector()
+chordQualities = ["min", "maj", "sus", "", "-", "+"]
+chordRoots = ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"]
 
 class MicrophoneRecorder(object):
     def __init__(self, rate=2000, chunksize=1024):
@@ -181,9 +183,11 @@ class LiveFFTWidget(QtGui.QWidget):
             # print self.freq_vect.shape
             # print np.abs(np.fft.rfft(current_frame)) # CURRENT SOUND VECTOR with all frequencies
 
+            # get 12x1 chroma vector with respective energies for each note
             chroma = chromagram.calculateChromagram(self.freq_vect, np.abs(np.fft.rfft(current_frame)))
             chordFinder.detectChord(chroma)
-            print chordFinder.rootNote
+            chordString = str(chordRoots[chordFinder.rootNote]) + str(chordQualities[chordFinder.quality]) + str(chordFinder.intervals)
+            print chordString
 
             # plots the time signal
             self.line_top.set_data(self.time_vect, current_frame)
