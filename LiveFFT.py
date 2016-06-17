@@ -12,7 +12,7 @@ from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as Navigatio
 import chromagram
 
 class MicrophoneRecorder(object):
-    def __init__(self, rate=4000, chunksize=8192):
+    def __init__(self, rate=2000, chunksize=1024):
         self.rate = rate
         self.chunksize = chunksize
         self.p = pyaudio.PyAudio()
@@ -106,7 +106,9 @@ class LiveFFTWidget(QtGui.QWidget):
 
         self.setGeometry(300, 300, 350, 300)
         self.setWindowTitle('LiveFFT')
-        # self.show()
+        self.show()
+
+
         # timer for calls, taken from:
         # http://ralsina.me/weblog/posts/BB974.html
         timer = QtCore.QTimer()
@@ -164,6 +166,7 @@ class LiveFFTWidget(QtGui.QWidget):
         if len(frames) > 0:
             # keeps only the last frame
             current_frame = frames[-1]
+            print current_frame
             # rounded_freq_vec = []
             # for x in range(0, len(self.freq_vect)):
             #     rounded_freq_vec.append(round(self.freq_vect[x]))
@@ -175,7 +178,7 @@ class LiveFFTWidget(QtGui.QWidget):
             print self.freq_vect.shape
             # print np.abs(np.fft.rfft(current_frame)) # CURRENT SOUND VECTOR with all frequencies
 
-            print chromagram.calculateChromagram(self.freq_vect, np.abs(np.fft.rfft(current_frame)))
+            chromagram.calculateChromagram(self.freq_vect, np.abs(np.fft.rfft(current_frame)))
 
             # plots the time signal
             self.line_top.set_data(self.time_vect, current_frame)
@@ -186,10 +189,10 @@ class LiveFFTWidget(QtGui.QWidget):
             else:
                 fft_frame *= (1 + self.fixedGainSlider.value()) / 5000000.
                 #print(np.abs(fft_frame).max())
-            # self.line_bottom.set_data(self.freq_vect, np.abs(fft_frame))
+            self.line_bottom.set_data(self.freq_vect, np.abs(fft_frame))
 
             # refreshes the plots
-            # self.main_figure.canvas.draw()
+            self.main_figure.canvas.draw()
 
 
 if __name__ == "__main__":
