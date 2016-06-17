@@ -12,7 +12,7 @@ from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as Navigatio
 import chromagram
 
 class MicrophoneRecorder(object):
-    def __init__(self, rate=100000, chunksize=1024):
+    def __init__(self, rate=4000, chunksize=8192):
         self.rate = rate
         self.chunksize = chunksize
         self.p = pyaudio.PyAudio()
@@ -164,12 +164,15 @@ class LiveFFTWidget(QtGui.QWidget):
         if len(frames) > 0:
             # keeps only the last frame
             current_frame = frames[-1]
-            rounded_freq_vec = []
-            for x in range(0, len(self.freq_vect)):
-                rounded_freq_vec.append(round(self.freq_vect[x]))
+            # rounded_freq_vec = []
+            # for x in range(0, len(self.freq_vect)):
+            #     rounded_freq_vec.append(round(self.freq_vect[x]))
 
-            
-            # print self.freq_vect.shape
+            # expanded_frame = []
+            # for i in range(0, len(rounded_freq_vec)):
+            #     diff = rounded_freq_vec[i]-rounded_freq_vec[i-1]
+
+            print self.freq_vect.shape
             # print np.abs(np.fft.rfft(current_frame)) # CURRENT SOUND VECTOR with all frequencies
 
             print chromagram.calculateChromagram(self.freq_vect, np.abs(np.fft.rfft(current_frame)))
