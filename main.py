@@ -21,6 +21,8 @@ def getImprovScale(chord, symbol):
     scaleType = scale.DorianScale()
     if chord.quality == 1:
         scaleType = scale.MajorScale()
+    elif chord.quality == 3:
+        scaleType = scale.MixolydianScale()
     tones = getChordTones(symbol)
     for t in range(0, len(tones)):
         tones[t] = tones[t].replace('b', '-')
