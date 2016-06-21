@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-
-import sys
-import threading
+import sys, os, threading, subprocess
 import atexit
 import pyaudio
 import numpy as np
@@ -9,12 +7,15 @@ import matplotlib.pyplot as plt
 from PyQt4 import QtGui, QtCore
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as NavigationToolbar
-import chromagram
-import chords
+import chromagram, chords
+from music21 import *
 
 chordFinder = chords.ChordDetector()
 chordQualities = ["min", "maj", "sus", "", "-", "+"]
 chordRoots = ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"]
+
+def getChordTones(chordSymbol):
+    return eval(os.popen('./chordScale "'+chordSymbol+'"').read())
 
 class MicrophoneRecorder(object):
     def __init__(self, rate=2000, chunksize=1024):
@@ -80,37 +81,17 @@ class LiveFFTWidget(QtGui.QWidget):
 
     def initUI(self):
 
-        hbox_gain = QtGui.QHBoxLayout()
-        autoGain = QtGui.QLabel('Auto gain for frequency spectrum')
-        autoGainCheckBox = QtGui.QCheckBox(checked=True)
-        hbox_gain.addWidget(autoGain)
-        hbox_gain.addWidget(autoGainCheckBox)
-
-        # reference to checkbox
-        self.autoGainCheckBox = autoGainCheckBox
-
-        hbox_fixedGain = QtGui.QHBoxLayout()
-        fixedGain = QtGui.QLabel('Manual gain level for frequency spectrum')
-        fixedGainSlider = QtGui.QSlider(QtCore.Qt.Horizontal)
-        hbox_fixedGain.addWidget(fixedGain)
-        hbox_fixedGain.addWidget(fixedGainSlider)
-
-        self.fixedGainSlider = fixedGainSlider
-
         vbox = QtGui.QVBoxLayout()
 
-        vbox.addLayout(hbox_gain)
-        vbox.addLayout(hbox_fixedGain)
 
         # mpl figure
         self.main_figure = MplFigure(self)
-        vbox.addWidget(self.main_figure.toolbar)
         vbox.addWidget(self.main_figure.canvas)
 
         self.setLayout(vbox)
 
         self.setGeometry(300, 300, 350, 300)
-        self.setWindowTitle('LiveFFT')
+        self.setWindowTitle('Joey Alexander')
         self.show()
 
 
@@ -171,18 +152,6 @@ class LiveFFTWidget(QtGui.QWidget):
         if len(frames) > 0:
             # keeps only the last frame
             current_frame = frames[-1]
-            # print current_frame
-            # rounded_freq_vec = []
-            # for x in range(0, len(self.freq_vect)):
-            #     rounded_freq_vec.append(round(self.freq_vect[x]))
-
-            # expanded_frame = []
-            # for i in range(0, len(rounded_freq_vec)):
-            #     diff = rounded_freq_vec[i]-rounded_freq_vec[i-1]
-
-            # print self.freq_vect.shape
-            # print np.abs(np.fft.rfft(current_frame)) # CURRENT SOUND VECTOR with all frequencies
-
             # get 12x1 chroma vector with respective energies for each note
             chroma = chromagram.calculateChromagram(self.freq_vect, np.abs(np.fft.rfft(current_frame)))
             chordFinder.detectChord(chroma)
@@ -192,16 +161,14 @@ class LiveFFTWidget(QtGui.QWidget):
                 chordString = str(chordRoots[chordFinder.rootNote]) + str(chordQualities[chordFinder.quality]) + str(chordFinder.intervals)
             else:
                 chordString = str(chordRoots[chordFinder.rootNote]) + str(chordQualities[chordFinder.quality])
-            print chordString
+            print getChordTones(chordString)
 
             # plots the time signal
             self.line_top.set_data(self.time_vect, current_frame)
             # computes and plots the fft signal
             fft_frame = np.fft.rfft(current_frame)
-            if self.autoGainCheckBox.checkState() == QtCore.Qt.Checked:
-                fft_frame /= np.abs(fft_frame).max()
-            else:
-                fft_frame *= (1 + self.fixedGainSlider.value()) / 5000000.
+            # if self.autoGainCheckBox.checkState() == QtCore.Qt.Checked:
+            fft_frame /= np.abs(fft_frame).max()
                 #print(np.abs(fft_frame).max())
             self.line_bottom.set_data(self.freq_vect, np.abs(fft_frame))
 
