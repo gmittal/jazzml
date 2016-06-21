@@ -17,6 +17,19 @@ chordRoots = ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"]
 def getChordTones(chordSymbol):
     return eval(os.popen('./chordScale "'+chordSymbol+'"').read())
 
+def getImprovScale(chord, symbol):
+    scaleType = scale.DorianScale()
+    if chord.quality == 1:
+        scaleType = scale.MajorScale()
+    tones = getChordTones(symbol)
+    for t in range(0, len(tones)):
+        tones[t] = tones[t].replace('b', '-')
+    # print tones
+    scales = scaleType.derive(tones)
+    allPitches = list(set([pitch for pitch in scales.getPitches()]))
+    allNoteNames = [i.name for i in allPitches]
+    return {'name': scales.name, 'scale': allNoteNames}
+
 class MicrophoneRecorder(object):
     def __init__(self, rate=2000, chunksize=1024):
         self.rate = rate
@@ -161,7 +174,9 @@ class LiveFFTWidget(QtGui.QWidget):
                 chordString = str(chordRoots[chordFinder.rootNote]) + str(chordQualities[chordFinder.quality]) + str(chordFinder.intervals)
             else:
                 chordString = str(chordRoots[chordFinder.rootNote]) + str(chordQualities[chordFinder.quality])
-            print getChordTones(chordString)
+
+            improvScale = getImprovScale(chordFinder, chordString)
+            print chordString, improvScale["name"], improvScale["scale"]
 
             # plots the time signal
             self.line_top.set_data(self.time_vect, current_frame)
