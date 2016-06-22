@@ -1,4 +1,3 @@
-currentChord.txt
 venv
 *.pyc
 .DS_Store

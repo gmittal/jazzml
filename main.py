@@ -17,6 +17,12 @@ chordRoots = ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"]
 def getChordTones(chordSymbol):
     return eval(os.popen('./scripts/chordScale "'+chordSymbol+'"').read())
 
+def updateChordFile(symbol, quality):
+    f = open("currentChord.txt", "w")
+    f.write(symbol)
+    f.write(" "+str(quality))
+    f.close()
+
 def getImprovScale(chord, symbol):
     scaleType = scale.DorianScale()
     if chord.quality == 1:
@@ -179,6 +185,7 @@ class LiveFFTWidget(QtGui.QWidget):
 
             improvScale = getImprovScale(chordFinder, chordString)
             print chordString, improvScale["name"], improvScale["scale"]
+            updateChordFile(chordString, chordFinder.quality)
 
             # plots the time signal
             self.line_top.set_data(self.time_vect, current_frame)
