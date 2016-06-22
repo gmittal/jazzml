@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from PyQt4 import QtGui, QtCore
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as NavigationToolbar
-import chromagram, chords
+import chords
 from music21 import *
 
 chordFinder = chords.ChordDetector()
@@ -15,7 +15,7 @@ chordQualities = ["min", "maj", "sus", "", "-", "+"]
 chordRoots = ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"]
 
 def getChordTones(chordSymbol):
-    return eval(os.popen('./chordScale "'+chordSymbol+'"').read())
+    return eval(os.popen('./scripts/chordScale "'+chordSymbol+'"').read())
 
 def getImprovScale(chord, symbol):
     scaleType = scale.DorianScale()
@@ -28,7 +28,7 @@ def getImprovScale(chord, symbol):
         tones[t] = tones[t].replace('b', '-')
     # print tones
     scales = scaleType.derive(tones)
-    allPitches = list(set([pitch for pitch in scales.getPitches()]))
+    allPitches = scales.getPitches()
     allNoteNames = [i.name for i in allPitches]
     return {'name': scales.name, 'scale': allNoteNames}
 
@@ -168,7 +168,7 @@ class LiveFFTWidget(QtGui.QWidget):
             # keeps only the last frame
             current_frame = frames[-1]
             # get 12x1 chroma vector with respective energies for each note
-            chroma = chromagram.calculateChromagram(self.freq_vect, np.abs(np.fft.rfft(current_frame)))
+            chroma = chords.calculateChromagram(self.freq_vect, np.abs(np.fft.rfft(current_frame)))
             chordFinder.detectChord(chroma)
 
             chordString = ""
