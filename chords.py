@@ -9,11 +9,14 @@ numOctaves = 4
 numBinsToSearch = 2
 noteFrequencies = []
 chromagram = [0.0000000000000000000]*12
+noteNames = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
 
+print "Reference Frequencies (hz):"
 for i in range(0, 12):
-    noteFrequencies.append(referenceFrequency*math.pow(2, i/12))
+    freq = referenceFrequency*math.pow(2, i/12)
+    print noteNames[i] + ": " + str(freq)
+    noteFrequencies.append(freq)
 
-print noteFrequencies
 # take a frequency vector and then the audio values for each of those frequencies
 def calculateChromagram(freq, m):
     divisorRatio = (samplingFrequency/4.0)/bufferSize

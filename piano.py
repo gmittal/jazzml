@@ -54,14 +54,14 @@ def playNote(note, beats):
     s = sig(freq, seconds)
     play(s)
 
-while True:
-    f = open("currentChord.txt", "r").read()
-    q = f.split(" ")[1]
-    c = f.split(" ")[0]
-    s = getImprovScale(q, c)["scale"]
-    note = s[randint(0, 7)]
-    print c, note, mapFreq(note), s
-    playNote(note, 1/2)
+
+f = open("currentChord.txt", "r").read()
+q = f.split(" ")[1]
+c = f.split(" ")[0]
+s = getImprovScale(q, c)["scale"]
+note = s[randint(0, 7)]
+print c, note, mapFreq(note), s
+playNote(note, 1/2)
 
 # playNote("C", 1/2)
 # playNote("C#", 1/2)
