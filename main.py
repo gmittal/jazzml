@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import sys, os, threading, subprocess
 import atexit
 import pyaudio
@@ -94,9 +93,6 @@ class LiveFFTWidget(QtGui.QWidget):
         # init class data
         self.initData()
 
-        # connect slots
-        self.connectSlots()
-
         # init MPL widget
         self.initMplWidget()
 
@@ -137,8 +133,6 @@ class LiveFFTWidget(QtGui.QWidget):
                                          1./mic.rate)
         self.time_vect = np.arange(mic.chunksize, dtype=np.float32) / mic.rate * 1000
 
-    def connectSlots(self):
-        pass
 
     def initMplWidget(self):
         """creates initial matplotlib plots in the main window and keeps
