@@ -8,6 +8,7 @@ from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as NavigationToolbar
 import chords
 from music21 import *
+import peakutils
 
 chordFinder = chords.ChordDetector()
 chordQualities = ["min", "maj", "sus", "", "-", "+"]
@@ -21,6 +22,13 @@ def updateChordFile(symbol, quality):
     f.write(symbol)
     f.write(" "+str(quality))
     f.close()
+
+def findObjects(array, value):
+    ix = []
+    for i in range(0, len(array)):
+        if array[i] == value:
+            ix.append(i)
+    return ix
 
 def getImprovScale(chord, symbol):
     scaleType = scale.DorianScale()
@@ -167,6 +175,7 @@ class LiveFFTWidget(QtGui.QWidget):
         if len(frames) > 0:
             # keeps only the last frame
             current_frame = frames[-1]
+
             # get 12x1 chroma vector with respective energies for each note
             chroma = chords.calculateChromagram(self.freq_vect, np.abs(np.fft.rfft(current_frame)))
             chordFinder.detectChord(chroma)
@@ -178,11 +187,17 @@ class LiveFFTWidget(QtGui.QWidget):
                 chordString = str(chordRoots[chordFinder.rootNote]) + str(chordQualities[chordFinder.quality])
 
             improvScale = getImprovScale(chordFinder, chordString)
-            print chordString, improvScale["name"], improvScale["scale"]
+            # print chordString, improvScale["name"], improvScale["scale"]
             updateChordFile(chordString, chordFinder.quality)
 
             # plots the time signal
             self.line_top.set_data(self.time_vect, current_frame)
+            # print len(frames)
+            # beat_frame = frames[-1] + frames[-2] + frames[-3] + frames[-4] + frames[-5] + frames[-6]
+            # print beat_frame.shape
+            # indexes = peakutils.indexes(beat_frame, thres=0.02/max(beat_frame), min_dist=600)
+            # print indexes
+
             # computes and plots the fft signal
             fft_frame = np.fft.rfft(current_frame)
             # if self.autoGainCheckBox.checkState() == QtCore.Qt.Checked:
