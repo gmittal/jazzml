@@ -1,9 +1,3 @@
-"""
-Vanilla Char-RNN using TensorFlow by Vinh Khuc (@knvinh).
-Adapted from Karpathy's min-char-rnn.py
-https://gist.github.com/karpathy/d4dee566867f8291f086
-BSD License
-"""
 import random
 import numpy as np
 import tensorflow as tf
@@ -16,7 +10,7 @@ def one_hot(v):
     return np.eye(vocab_size)[v]
 
 # Data I/O
-data = open(__file__, 'r').read()  # Use this source file as input for RNN
+data = ["a", "b", "c"]  # Use this source file as input for RNN
 chars = sorted(list(set(data)))
 data_size, vocab_size = len(data), len(chars)
 print('Data has %d characters, %d unique.' % (data_size, vocab_size))
