@@ -39,7 +39,6 @@ def getImprovScale(chord, symbol):
     tones = getChordTones(symbol)
     for t in range(0, len(tones)):
         tones[t] = tones[t].replace('b', '-')
-    # print tones
     scales = scaleType.derive(tones)
     allPitches = scales.getPitches()
     allNoteNames = [i.name for i in allPitches]
@@ -94,78 +93,46 @@ class MplFigure(object):
 class LiveFFTWidget(QtGui.QWidget):
     def __init__(self):
         QtGui.QWidget.__init__(self)
-
-        # customize the UI
         self.initUI()
-
-        # init class data
         self.initData()
-
-        # init MPL widget
         self.initMplWidget()
 
     def initUI(self):
-
         vbox = QtGui.QVBoxLayout()
-
-
-        # mpl figure
         self.main_figure = MplFigure(self)
         vbox.addWidget(self.main_figure.canvas)
-
         self.setLayout(vbox)
-
         self.setGeometry(300, 300, 350, 300)
         self.setWindowTitle('Joey Alexander')
         self.show()
-
-
-        # timer for calls, taken from:
-        # http://ralsina.me/weblog/posts/BB974.html
         timer = QtCore.QTimer()
         timer.timeout.connect(self.handleNewData)
         timer.start(50)
-        # keep reference to timer
         self.timer = timer
-
 
     def initData(self):
         mic = MicrophoneRecorder()
         mic.start()
-
-        # keeps reference to mic
         self.mic = mic
-
-        # computes the parameters that will be used during plotting
         self.freq_vect = np.fft.rfftfreq(mic.chunksize,
                                          1./mic.rate)
         self.time_vect = np.arange(mic.chunksize, dtype=np.float32) / mic.rate * 1000
 
 
     def initMplWidget(self):
-        """creates initial matplotlib plots in the main window and keeps
-        references for further use"""
-        # top plot
         self.ax_top = self.main_figure.figure.add_subplot(211)
         self.ax_top.set_ylim(-32768, 32768)
         self.ax_top.set_xlim(0, self.time_vect.max())
         self.ax_top.set_xlabel(u'time (ms)', fontsize=6)
-
-        # bottom plot
         self.ax_bottom = self.main_figure.figure.add_subplot(212)
         self.ax_bottom.set_ylim(0, 1)
         self.ax_bottom.set_xlim(0, self.freq_vect.max())
         self.ax_bottom.set_xlabel(u'frequency (Hz)', fontsize=6)
-        # line objects
         self.line_top, = self.ax_top.plot(self.time_vect,
                                          np.ones_like(self.time_vect))
-
         self.line_bottom, = self.ax_bottom.plot(self.freq_vect,
                                                np.ones_like(self.freq_vect))
 
-
-        # tight layout
-        #plt.tight_layout()
 
     def handleNewData(self):
         """ handles the asynchroneously collected sound chunks """
@@ -187,16 +154,10 @@ class LiveFFTWidget(QtGui.QWidget):
                 chordString = str(chordRoots[chordFinder.rootNote]) + str(chordQualities[chordFinder.quality])
 
             improvScale = getImprovScale(chordFinder, chordString)
-            # print chordString, improvScale["name"], improvScale["scale"]
             updateChordFile(chordString, chordFinder.quality)
 
             # plots the time signal
             self.line_top.set_data(self.time_vect, current_frame)
-            # print len(frames)
-            # beat_frame = frames[-1] + frames[-2] + frames[-3] + frames[-4] + frames[-5] + frames[-6]
-            # print beat_frame.shape
-            # indexes = peakutils.indexes(beat_frame, thres=0.02/max(beat_frame), min_dist=600)
-            # print indexes
 
             # computes and plots the fft signal
             fft_frame = np.fft.rfft(current_frame)
