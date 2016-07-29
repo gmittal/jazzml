@@ -10,7 +10,17 @@ import simplejson as json
 raw_dataset = open("data/lick.json", "r").read()
 print raw_dataset
 dataset = json.loads(raw_dataset)["data"]
-print dataset
+
+def lst_set(lst):
+    last = object()
+    lst = sorted(lst, reverse=True)
+    for item in lst:
+        if item == last:
+            continue
+        yield item
+        last = item
+
+print list(lst_set(dataset))
 
 bpm = 300
 noteFrequencies = []

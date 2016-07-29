@@ -9,9 +9,20 @@ random.seed(seed_value)
 def one_hot(v):
     return np.eye(vocab_size)[v]
 
-# Data I/O
-data = ["a", "b", "c"]  # Use this source file as input for RNN
-chars = sorted(list(set(data)))
+def lst_set(lst):
+    last = object()
+    lst = sorted(lst, reverse=True)
+    for item in lst:
+        if item == last:
+            continue
+        yield item
+        last = item
+
+# bring in the lick.json
+raw_dataset = open("data/lick.json", "r").read()
+
+data = json.loads(raw_dataset)["data"]
+chars = list(lst_set(dataset))
 data_size, vocab_size = len(data), len(chars)
 print('Data has %d characters, %d unique.' % (data_size, vocab_size))
 char_to_ix = {ch: i for i, ch in enumerate(chars)}
