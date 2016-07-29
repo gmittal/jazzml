@@ -9,20 +9,10 @@ random.seed(seed_value)
 def one_hot(v):
     return np.eye(vocab_size)[v]
 
-def lst_set(lst):
-    last = object()
-    lst = sorted(lst, reverse=True)
-    for item in lst:
-        if item == last:
-            continue
-        yield item
-        last = item
-
-# bring in the lick.json
-raw_dataset = open("data/lick.json", "r").read()
-
-data = json.loads(raw_dataset)["data"]
-chars = list(lst_set(dataset))
+data = []
+for n in range(1, 1000):
+    data.append(random.randint(1, 87));
+chars = sorted(list(set(data)))
 data_size, vocab_size = len(data), len(chars)
 print('Data has %d characters, %d unique.' % (data_size, vocab_size))
 char_to_ix = {ch: i for i, ch in enumerate(chars)}
@@ -121,7 +111,7 @@ while True:
             ixes.append(ix)
             sample_seq_ix = sample_seq_ix[1:] + [ix]
 
-        txt = ''.join(ix_to_char[ix] for ix in ixes)
+        txt = (ix_to_char[ix] for ix in ixes)
         print('----\n %s \n----\n' % (txt,))
 
     p += seq_length
