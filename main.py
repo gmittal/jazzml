@@ -15,7 +15,7 @@ chordQualities = ["min", "maj", "sus", "", "-", "+"]
 chordRoots = ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"]
 
 def getChordTones(chordSymbol):
-    return eval(os.popen('./scripts/chordScale "'+chordSymbol+'"').read())
+    return eval(os.popen('./util/chordScale "'+chordSymbol+'"').read())
 
 def updateChordFile(symbol, quality):
     f = open("currentChord.txt", "w")
