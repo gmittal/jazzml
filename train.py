@@ -17,6 +17,7 @@ data_size, vocab_size = len(data), len(chars)
 print('Data has %d characters, %d unique.' % (data_size, vocab_size))
 char_to_ix = {ch: i for i, ch in enumerate(chars)}
 ix_to_char = {i: ch for i, ch in enumerate(chars)}
+bestLoss = 1e10; # anything has to be better than an arbitrarily large number
 
 # Hyper-parameters
 hidden_size   = 100  # hidden layer's size
@@ -90,6 +91,11 @@ while True:
                                       feed_dict={inputs: input_vals,
                                                  targets: target_vals,
                                                  init_state: hprev_val})
+    # we're looking for improvement here
+    if loss_val < bestLoss:
+        bestLoss = loss_val
+        np.savetxt('data/weights.gz', np.copy(hprev_val))
+
     if n % 100 == 0:
         # Progress
         print('iter: %d, p: %d, loss: %f' % (n, p, loss_val))
@@ -100,6 +106,8 @@ while True:
         sample_seq_ix = [char_to_ix[ch] for ch in data[start_ix:start_ix + seq_length]]
         ixes          = []
         sample_prev_state_val = np.copy(hprev_val)
+
+        print sample_prev_state_val
 
         for t in range(sample_length):
             sample_input_vals = one_hot(sample_seq_ix)
