@@ -90,7 +90,7 @@ while True:
                                       feed_dict={inputs: input_vals,
                                                  targets: target_vals,
                                                  init_state: hprev_val})
-    if n % 500 == 0:
+    if n % 100 == 0:
         # Progress
         print('iter: %d, p: %d, loss: %f' % (n, p, loss_val))
 
@@ -112,6 +112,7 @@ while True:
             sample_seq_ix = sample_seq_ix[1:] + [ix]
 
         txt = (ix_to_char[ix] for ix in ixes)
+        txt = list(txt)
         print('----\n %s \n----\n' % (txt,))
 
     p += seq_length
