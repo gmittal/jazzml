@@ -7,6 +7,8 @@ from mingus.containers import Note
 from mingus.midi import fluidsynth
 import simplejson as json
 
+fluidsynth.init(os.getcwd() + "/soundfonts/piano.sf2")
+
 raw_dataset = open("data/lick.json", "r").read()
 print raw_dataset
 dataset = json.loads(raw_dataset)["data"]
@@ -65,10 +67,7 @@ def playNote(note, beats):
     play(s)
 
 
-f = open("currentChord.txt", "r").read()
+f = open(os.getcwd()+"/data/currentChord.txt", "r").read()
 q = f.split(" ")[1]
 c = f.split(" ")[0]
 s = getImprovScale(q, c)["scale"]
-# note = s[randint(0, 7)]
-# print c, note, mapFreq(note), s
-# playNote(note, 1/2)

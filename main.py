@@ -18,7 +18,7 @@ def getChordTones(chordSymbol):
     return eval(os.popen('./util/chordScale "'+chordSymbol+'"').read())
 
 def updateChordFile(symbol, quality):
-    f = open("currentChord.txt", "w")
+    f = open(os.getcwd()+"/data/currentChord.txt", "w")
     f.write(symbol)
     f.write(" "+str(quality))
     f.close()
