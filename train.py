@@ -9,9 +9,7 @@ random.seed(seed_value)
 def one_hot(v):
     return np.eye(vocab_size)[v]
 
-data = []
-for n in range(1, 1000):
-    data.append(random.randint(1, 87));
+data = list(np.loadtxt("data/random_dataset.gz")) # import dataset
 chars = sorted(list(set(data)))
 data_size, vocab_size = len(data), len(chars)
 print('Data has %d characters, %d unique.' % (data_size, vocab_size))
@@ -98,30 +96,8 @@ while True:
 
     if n % 100 == 0:
         # Progress
-        print('iter: %d, p: %d, loss: %f' % (n, p, loss_val))
+        print('iter: %d, p: %d, loss: %f, best_loss: %f' % (n, p, loss_val, bestLoss))
 
-        # Do sampling
-        sample_length = 200
-        start_ix      = random.randint(0, len(data) - seq_length)
-        sample_seq_ix = [char_to_ix[ch] for ch in data[start_ix:start_ix + seq_length]]
-        ixes          = []
-        sample_prev_state_val = np.copy(hprev_val)
-
-        print sample_prev_state_val
-
-        for t in range(sample_length):
-            sample_input_vals = one_hot(sample_seq_ix)
-            sample_output_softmax_val, sample_prev_state_val = \
-                sess.run([output_softmax, hprev],
-                         feed_dict={inputs: sample_input_vals, init_state: sample_prev_state_val})
-
-            ix = np.random.choice(range(vocab_size), p=sample_output_softmax_val.ravel())
-            ixes.append(ix)
-            sample_seq_ix = sample_seq_ix[1:] + [ix]
-
-        txt = (ix_to_char[ix] for ix in ixes)
-        txt = list(txt)
-        print('----\n %s \n----\n' % (txt,))
 
     p += seq_length
     n += 1
