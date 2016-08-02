@@ -102,12 +102,7 @@ while True:
         np.savetxt(os.getcwd()+"/data/Why.gz", Why.eval(session=sess))
         np.savetxt(os.getcwd()+"/data/bh.gz", bh.eval(session=sess))
         np.savetxt(os.getcwd()+"/data/by.gz", by.eval(session=sess))
-
-        print Wxh.get_shape()
-        print Whh.get_shape()
-        print Why.get_shape()
-        print bh.get_shape()
-        print by.get_shape()
+        np.savetxt(os.getcwd()+"/data/hprev_val.gz", hprev_val)
 
     if n % 100 == 0:
         # Progress
@@ -131,7 +126,7 @@ while True:
             sample_seq_ix = sample_seq_ix[1:] + [ix]
 
         txt = list(ix_to_char[ix] for ix in ixes)
-        print('----\n %s \n----\n' % (txt,))
+        # print('----\n %s \n----\n' % (txt,))
 
     p += seq_length
     n += 1

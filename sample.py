@@ -40,7 +40,6 @@ with tf.variable_scope("RNN") as scope:
         bh = np.loadtxt(os.getcwd()+"/data/bh.gz").astype(np.float32)
         by = np.loadtxt(os.getcwd()+"/data/by.gz").astype(np.float32)
 
-
         hs_t = tf.tanh(tf.matmul(xs_t, Wxh) + tf.matmul(hs_t, Whh) + bh)
         ys_t = tf.matmul(hs_t, Why) + by
         ys.append(ys_t)
@@ -51,19 +50,19 @@ output_softmax = tf.nn.softmax(ys[-1])  # Get softmax for sampling
 outputs = tf.concat(0, ys)
 loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(outputs, targets))
 
-# Minimizer
-minimizer = tf.train.AdamOptimizer()
-grads_and_vars = minimizer.compute_gradients(loss)
+# # Minimizer
+# minimizer = tf.train.AdamOptimizer()
+# grads_and_vars = minimizer.compute_gradients(loss)
 
-# Gradient clipping
-grad_clipping = tf.constant(5.0, name="grad_clipping")
-clipped_grads_and_vars = []
-for grad, var in grads_and_vars:
-    clipped_grad = tf.clip_by_value(grad, -grad_clipping, grad_clipping)
-    clipped_grads_and_vars.append((clipped_grad, var))
-
-# Gradient updates
-updates = minimizer.apply_gradients(clipped_grads_and_vars)
+# # Gradient clipping
+# grad_clipping = tf.constant(5.0, name="grad_clipping")
+# clipped_grads_and_vars = []
+# for grad, var in grads_and_vars:
+#     clipped_grad = tf.clip_by_value(grad, -grad_clipping, grad_clipping)
+#     clipped_grads_and_vars.append((clipped_grad, var))
+#
+# # Gradient updates
+# updates = minimizer.apply_gradients(clipped_grads_and_vars)
 
 # Session
 sess = tf.Session()
