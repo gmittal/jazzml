@@ -1,6 +1,7 @@
 import random
 import numpy as np
 import tensorflow as tf
+import os
 
 seed_value = 42
 tf.set_random_seed(seed_value)
@@ -9,13 +10,14 @@ random.seed(seed_value)
 def one_hot(v):
     return np.eye(vocab_size)[v]
 
-data = list(np.loadtxt("data/increasing_numbers_dataset.gz")) # import dataset
+# Data I/O
+data = np.loadtxt(os.getcwd()+"/data/increasing_numbers_dataset.gz")
 chars = sorted(list(set(data)))
 data_size, vocab_size = len(data), len(chars)
 print('Data has %d characters, %d unique.' % (data_size, vocab_size))
 char_to_ix = {ch: i for i, ch in enumerate(chars)}
 ix_to_char = {i: ch for i, ch in enumerate(chars)}
-bestLoss = 1e10; # anything has to be better than an arbitrarily large number
+bestLoss = 1e10
 
 # Hyper-parameters
 hidden_size   = 100  # hidden layer's size
@@ -41,8 +43,9 @@ with tf.variable_scope("RNN") as scope:
 
         hs_t = tf.tanh(tf.matmul(xs_t, Wxh) + tf.matmul(hs_t, Whh) + bh)
         ys_t = tf.matmul(hs_t, Why) + by
-
         ys.append(ys_t)
+
+
 
 hprev = hs_t
 output_softmax = tf.nn.softmax(ys[-1])  # Get softmax for sampling
@@ -71,10 +74,9 @@ sess.run(init)
 
 # Initial values
 n, p = 0, 0
-hprev_val = np.loadtxt("data/increasing_numbers_dataset.gz")
+hprev_val = np.zeros([1, hidden_size])
 
 while True:
-
     # Initialize
     if p + seq_length + 1 >= len(data) or n == 0:
         hprev_val = np.zeros([1, hidden_size])
@@ -91,22 +93,45 @@ while True:
                                       feed_dict={inputs: input_vals,
                                                  targets: target_vals,
                                                  init_state: hprev_val})
-    # we're looking for improvement here
+
     if loss_val < bestLoss:
         bestLoss = loss_val
-        np.savetxt('data/hprev.gz', np.copy(hprev_val))
-        # save those weights
-        np.savetxt('data/Wxh.gz', np.copy(Wxh.eval(session=sess)))
-        np.savetxt('data/Whh.gz', np.copy(Whh.eval(session=sess)))
-        np.savetxt('data/Why.gz', np.copy(Why.eval(session=sess)))
-        np.savetxt('data/bh.gz', np.copy(bh.eval(session=sess)))
-        np.savetxt('data/by.gz', np.copy(by.eval(session=sess)))
+        # save everything
+        np.savetxt(os.getcwd()+"/data/Wxh.gz", Wxh.eval(session=sess))
+        np.savetxt(os.getcwd()+"/data/Whh.gz", Whh.eval(session=sess))
+        np.savetxt(os.getcwd()+"/data/Why.gz", Why.eval(session=sess))
+        np.savetxt(os.getcwd()+"/data/bh.gz", bh.eval(session=sess))
+        np.savetxt(os.getcwd()+"/data/by.gz", by.eval(session=sess))
+
+        print Wxh.get_shape()
+        print Whh.get_shape()
+        print Why.get_shape()
+        print bh.get_shape()
+        print by.get_shape()
 
     if n % 100 == 0:
-        print Wxh.eval(session=sess)
         # Progress
         print('iter: %d, p: %d, loss: %f, best_loss: %f' % (n, p, loss_val, bestLoss))
 
+        # Do sampling
+        sample_length = 200
+        start_ix      = 0 #random.randint(0, len(data) - seq_length)
+        sample_seq_ix = [char_to_ix[ch] for ch in data[start_ix:start_ix + seq_length]]
+        ixes          = []
+        sample_prev_state_val = np.copy(hprev_val)
+
+        for t in range(sample_length):
+            sample_input_vals = one_hot(sample_seq_ix)
+            sample_output_softmax_val, sample_prev_state_val = \
+                sess.run([output_softmax, hprev],
+                         feed_dict={inputs: sample_input_vals, init_state: sample_prev_state_val})
+
+            ix = np.random.choice(range(vocab_size), p=sample_output_softmax_val.ravel())
+            ixes.append(ix)
+            sample_seq_ix = sample_seq_ix[1:] + [ix]
+
+        txt = list(ix_to_char[ix] for ix in ixes)
+        print('----\n %s \n----\n' % (txt,))
 
     p += seq_length
     n += 1

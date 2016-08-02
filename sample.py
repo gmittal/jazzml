@@ -1,6 +1,7 @@
 import random
 import numpy as np
 import tensorflow as tf
+import os
 
 seed_value = 42
 tf.set_random_seed(seed_value)
@@ -33,11 +34,12 @@ with tf.variable_scope("RNN") as scope:
     ys = []
     for t, xs_t in enumerate(tf.split(0, seq_length, inputs)):
         if t > 0: scope.reuse_variables()  # Reuse variables
-        Wxh = tf.get_variable("Wxh", [vocab_size, hidden_size], initializer=initializer)
-        Whh = tf.get_variable("Whh", [hidden_size, hidden_size], initializer=initializer)
-        Why = tf.get_variable("Why", [hidden_size, vocab_size], initializer=initializer)
-        bh  = tf.get_variable("bh", [hidden_size], initializer=initializer)
-        by  = tf.get_variable("by", [vocab_size], initializer=initializer)
+        Wxh = np.loadtxt(os.getcwd()+"/data/Wxh.gz").astype(np.float32)
+        Whh = np.loadtxt(os.getcwd()+"/data/Whh.gz").astype(np.float32)
+        Why = np.loadtxt(os.getcwd()+"/data/Why.gz").astype(np.float32)
+        bh = np.loadtxt(os.getcwd()+"/data/bh.gz").astype(np.float32)
+        by = np.loadtxt(os.getcwd()+"/data/by.gz").astype(np.float32)
+
 
         hs_t = tf.tanh(tf.matmul(xs_t, Wxh) + tf.matmul(hs_t, Whh) + bh)
         ys_t = tf.matmul(hs_t, Why) + by
@@ -85,24 +87,26 @@ input_vals  = one_hot(input_vals)
 target_vals = one_hot(target_vals)
 
 
-hprev_val = np.loadtxt('data/weights.gz').reshape(1, 100)
+hprev_val, loss_val, _ = sess.run([hprev, loss, updates],
+                                  feed_dict={inputs: input_vals,
+                                             targets: target_vals,
+                                             init_state: hprev_val})
+
+print loss_val
 
 # Do sampling
 sample_length = 200
 start_ix      = 0
 sample_seq_ix = [char_to_ix[ch] for ch in data[start_ix:start_ix + seq_length]]
-print sample_seq_ix
 ixes          = []
 sample_prev_state_val = np.copy(hprev_val)
 
 for t in range(sample_length):
     sample_input_vals = one_hot(sample_seq_ix)
-    sample_output_softmax_val, sample_prev_state_val = \
-        sess.run([output_softmax, hprev],
-                 feed_dict={inputs: sample_input_vals, init_state: sample_prev_state_val})
+    sample_output_softmax_val, sample_prev_state_val = sess.run([output_softmax, hprev], feed_dict={inputs: sample_input_vals, init_state: sample_prev_state_val})
 
     ix = np.random.choice(range(vocab_size), p=sample_output_softmax_val.ravel())
-    print ix
+
     ixes.append(ix)
     sample_seq_ix = sample_seq_ix[1:] + [ix]
 
