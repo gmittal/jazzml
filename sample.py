@@ -9,7 +9,7 @@ random.seed(seed_value)
 def one_hot(v):
     return np.eye(vocab_size)[v]
 
-data = list(np.loadtxt("data/random_dataset.gz")) # import dataset
+data = list(np.loadtxt("data/increasing_numbers_dataset.gz")) # import dataset
 chars = sorted(list(set(data)))
 data_size, vocab_size = len(data), len(chars)
 print('Data has %d characters, %d unique.' % (data_size, vocab_size))
@@ -86,19 +86,12 @@ target_vals = one_hot(target_vals)
 
 
 hprev_val = np.loadtxt('data/weights.gz').reshape(1, 100)
-loss_val = 1e2
-
-# we're looking for improvement here
-if loss_val < bestLoss:
-    bestLoss = loss_val
-
-# Progress
-print('iter: %d, p: %d, loss: %f, best_loss: %f' % (n, p, loss_val, bestLoss))
 
 # Do sampling
 sample_length = 200
-start_ix      = random.randint(0, len(data) - seq_length)
+start_ix      = 0
 sample_seq_ix = [char_to_ix[ch] for ch in data[start_ix:start_ix + seq_length]]
+print sample_seq_ix
 ixes          = []
 sample_prev_state_val = np.copy(hprev_val)
 
@@ -109,12 +102,13 @@ for t in range(sample_length):
                  feed_dict={inputs: sample_input_vals, init_state: sample_prev_state_val})
 
     ix = np.random.choice(range(vocab_size), p=sample_output_softmax_val.ravel())
+    print ix
     ixes.append(ix)
     sample_seq_ix = sample_seq_ix[1:] + [ix]
 
 txt = (ix_to_char[ix] for ix in ixes)
 txt = list(txt)
-print('----\n %s \n----\n' % (txt,))
+print('----\n %s \n----\n' % (sample_seq_ix,))
 
 p += seq_length
 n += 1

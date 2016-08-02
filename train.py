@@ -9,7 +9,7 @@ random.seed(seed_value)
 def one_hot(v):
     return np.eye(vocab_size)[v]
 
-data = list(np.loadtxt("data/random_dataset.gz")) # import dataset
+data = list(np.loadtxt("data/increasing_numbers_dataset.gz")) # import dataset
 chars = sorted(list(set(data)))
 data_size, vocab_size = len(data), len(chars)
 print('Data has %d characters, %d unique.' % (data_size, vocab_size))
@@ -41,6 +41,7 @@ with tf.variable_scope("RNN") as scope:
 
         hs_t = tf.tanh(tf.matmul(xs_t, Wxh) + tf.matmul(hs_t, Whh) + bh)
         ys_t = tf.matmul(hs_t, Why) + by
+
         ys.append(ys_t)
 
 hprev = hs_t
@@ -70,9 +71,10 @@ sess.run(init)
 
 # Initial values
 n, p = 0, 0
-hprev_val = np.zeros([1, hidden_size])
+hprev_val = np.loadtxt("data/increasing_numbers_dataset.gz")
 
 while True:
+
     # Initialize
     if p + seq_length + 1 >= len(data) or n == 0:
         hprev_val = np.zeros([1, hidden_size])
@@ -95,6 +97,7 @@ while True:
         np.savetxt('data/weights.gz', np.copy(hprev_val))
 
     if n % 100 == 0:
+        print Wxh.eval(session=sess)
         # Progress
         print('iter: %d, p: %d, loss: %f, best_loss: %f' % (n, p, loss_val, bestLoss))
 
