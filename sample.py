@@ -26,6 +26,13 @@ learning_rate = 1e-1
 inputs     = tf.placeholder(shape=[None, vocab_size], dtype=tf.float32, name="inputs")
 targets    = tf.placeholder(shape=[None, vocab_size], dtype=tf.float32, name="targets")
 init_state = tf.placeholder(shape=[1, hidden_size], dtype=tf.float32, name="state")
+Wxh_p = tf.placeholder(shape=[vocab_size, hidden_size], dtype=tf.float32, name="Wxh")
+Whh_p = tf.placeholder(shape=[hidden_size, hidden_size], dtype=tf.float32, name="Whh")
+Why_p = tf.placeholder(shape=[hidden_size, vocab_size], dtype=tf.float32, name="Why")
+bh_p  = tf.placeholder(shape=[hidden_size], dtype=tf.float32, name="bh")
+by_p  = tf.placeholder(shape=[hidden_size, vocab_size], dtype=tf.float32, name="by")
+
+Wxh = W
 
 initializer = tf.random_normal_initializer(stddev=0.1)
 
@@ -34,12 +41,6 @@ with tf.variable_scope("RNN") as scope:
     ys = []
     for t, xs_t in enumerate(tf.split(0, seq_length, inputs)):
         if t > 0: scope.reuse_variables()  # Reuse variables
-        Wxh = tf.get_variable("Wxh", [vocab_size, hidden_size], initializer=initializer)
-        Whh = tf.get_variable("Whh", [hidden_size, hidden_size], initializer=initializer)
-        Why = tf.get_variable("Why", [hidden_size, vocab_size], initializer=initializer)
-        bh  = tf.get_variable("bh", [hidden_size], initializer=initializer)
-        by  = tf.get_variable("by", [vocab_size], initializer=initializer)
-
         Wxh.assign(np.loadtxt(os.getcwd()+"/data/Wxh.gz").astype(np.float32))
         Whh.assign(np.loadtxt(os.getcwd()+"/data/Whh.gz").astype(np.float32))
         Why.assign(np.loadtxt(os.getcwd()+"/data/Why.gz").astype(np.float32))
