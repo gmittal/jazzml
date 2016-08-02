@@ -92,13 +92,13 @@ input_vals  = one_hot(input_vals)
 target_vals = one_hot(target_vals)
 
 
-# hprev_val, loss_val, _ = sess.run([hprev, loss, updates],
-#                                   feed_dict={inputs: input_vals,
-#                                              targets: target_vals,
-#                                              init_state: hprev_val})
+hprev_val, loss_val, _ = sess.run([hprev, loss, updates],
+                                  feed_dict={inputs: input_vals,
+                                             targets: target_vals,
+                                             init_state: hprev_val})
 
-hprev_val = np.loadtxt(os.getcwd()+"/data/hprev_val.gz").reshape(1,100)
-# print loss_val
+# hprev_val = np.loadtxt(os.getcwd()+"/data/hprev_val.gz").reshape(1,100)
+print loss_val
 
 # Do sampling
 sample_length = 200
