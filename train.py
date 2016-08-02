@@ -94,7 +94,13 @@ while True:
     # we're looking for improvement here
     if loss_val < bestLoss:
         bestLoss = loss_val
-        np.savetxt('data/weights.gz', np.copy(hprev_val))
+        np.savetxt('data/hprev.gz', np.copy(hprev_val))
+        # save those weights
+        np.savetxt('data/Wxh.gz', np.copy(Wxh.eval(session=sess)))
+        np.savetxt('data/Whh.gz', np.copy(Whh.eval(session=sess)))
+        np.savetxt('data/Why.gz', np.copy(Why.eval(session=sess)))
+        np.savetxt('data/bh.gz', np.copy(bh.eval(session=sess)))
+        np.savetxt('data/by.gz', np.copy(by.eval(session=sess)))
 
     if n % 100 == 0:
         print Wxh.eval(session=sess)
