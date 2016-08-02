@@ -34,11 +34,17 @@ with tf.variable_scope("RNN") as scope:
     ys = []
     for t, xs_t in enumerate(tf.split(0, seq_length, inputs)):
         if t > 0: scope.reuse_variables()  # Reuse variables
-        Wxh = np.loadtxt(os.getcwd()+"/data/Wxh.gz").astype(np.float32)
-        Whh = np.loadtxt(os.getcwd()+"/data/Whh.gz").astype(np.float32)
-        Why = np.loadtxt(os.getcwd()+"/data/Why.gz").astype(np.float32)
-        bh = np.loadtxt(os.getcwd()+"/data/bh.gz").astype(np.float32)
-        by = np.loadtxt(os.getcwd()+"/data/by.gz").astype(np.float32)
+        Wxh = tf.get_variable("Wxh", [vocab_size, hidden_size], initializer=initializer)
+        Whh = tf.get_variable("Whh", [hidden_size, hidden_size], initializer=initializer)
+        Why = tf.get_variable("Why", [hidden_size, vocab_size], initializer=initializer)
+        bh  = tf.get_variable("bh", [hidden_size], initializer=initializer)
+        by  = tf.get_variable("by", [vocab_size], initializer=initializer)
+
+        Wxh.assign(np.loadtxt(os.getcwd()+"/data/Wxh.gz").astype(np.float32))
+        Whh.assign(np.loadtxt(os.getcwd()+"/data/Whh.gz").astype(np.float32))
+        Why.assign(np.loadtxt(os.getcwd()+"/data/Why.gz").astype(np.float32))
+        bh.assign(np.loadtxt(os.getcwd()+"/data/bh.gz").astype(np.float32))
+        by.assign(np.loadtxt(os.getcwd()+"/data/by.gz").astype(np.float32))
 
         hs_t = tf.tanh(tf.matmul(xs_t, Wxh) + tf.matmul(hs_t, Whh) + bh)
         ys_t = tf.matmul(hs_t, Why) + by
@@ -50,19 +56,19 @@ output_softmax = tf.nn.softmax(ys[-1])  # Get softmax for sampling
 outputs = tf.concat(0, ys)
 loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(outputs, targets))
 
-# # Minimizer
-# minimizer = tf.train.AdamOptimizer()
-# grads_and_vars = minimizer.compute_gradients(loss)
+# Minimizer
+minimizer = tf.train.AdamOptimizer()
+grads_and_vars = minimizer.compute_gradients(loss)
 
-# # Gradient clipping
-# grad_clipping = tf.constant(5.0, name="grad_clipping")
-# clipped_grads_and_vars = []
-# for grad, var in grads_and_vars:
-#     clipped_grad = tf.clip_by_value(grad, -grad_clipping, grad_clipping)
-#     clipped_grads_and_vars.append((clipped_grad, var))
-#
-# # Gradient updates
-# updates = minimizer.apply_gradients(clipped_grads_and_vars)
+# Gradient clipping
+grad_clipping = tf.constant(5.0, name="grad_clipping")
+clipped_grads_and_vars = []
+for grad, var in grads_and_vars:
+    clipped_grad = tf.clip_by_value(grad, -grad_clipping, grad_clipping)
+    clipped_grads_and_vars.append((clipped_grad, var))
+
+# Gradient updates
+updates = minimizer.apply_gradients(clipped_grads_and_vars)
 
 # Session
 sess = tf.Session()
@@ -86,12 +92,13 @@ input_vals  = one_hot(input_vals)
 target_vals = one_hot(target_vals)
 
 
-hprev_val, loss_val, _ = sess.run([hprev, loss, updates],
-                                  feed_dict={inputs: input_vals,
-                                             targets: target_vals,
-                                             init_state: hprev_val})
+# hprev_val, loss_val, _ = sess.run([hprev, loss, updates],
+#                                   feed_dict={inputs: input_vals,
+#                                              targets: target_vals,
+#                                              init_state: hprev_val})
 
-print loss_val
+hprev_val = np.loadtxt(os.getcwd()+"/data/hprev_val.gz").reshape(1,100)
+# print loss_val
 
 # Do sampling
 sample_length = 200
