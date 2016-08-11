@@ -102,7 +102,6 @@ while True:
         np.savetxt(os.getcwd()+"/data/Why.gz", Why.eval(session=sess))
         np.savetxt(os.getcwd()+"/data/bh.gz", bh.eval(session=sess))
         np.savetxt(os.getcwd()+"/data/by.gz", by.eval(session=sess))
-        np.savetxt(os.getcwd()+"/data/hprev_val.gz", hprev_val)
 
     if n % 100 == 0:
         # Progress

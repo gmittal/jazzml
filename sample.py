@@ -30,9 +30,7 @@ Wxh_p = tf.placeholder(shape=[vocab_size, hidden_size], dtype=tf.float32, name="
 Whh_p = tf.placeholder(shape=[hidden_size, hidden_size], dtype=tf.float32, name="Whh")
 Why_p = tf.placeholder(shape=[hidden_size, vocab_size], dtype=tf.float32, name="Why")
 bh_p  = tf.placeholder(shape=[hidden_size], dtype=tf.float32, name="bh")
-by_p  = tf.placeholder(shape=[hidden_size, vocab_size], dtype=tf.float32, name="by")
-
-Wxh = W
+by_p  = tf.placeholder(shape=[vocab_size], dtype=tf.float32, name="by")
 
 initializer = tf.random_normal_initializer(stddev=0.1)
 
@@ -41,11 +39,18 @@ with tf.variable_scope("RNN") as scope:
     ys = []
     for t, xs_t in enumerate(tf.split(0, seq_length, inputs)):
         if t > 0: scope.reuse_variables()  # Reuse variables
-        Wxh.assign(np.loadtxt(os.getcwd()+"/data/Wxh.gz").astype(np.float32))
-        Whh.assign(np.loadtxt(os.getcwd()+"/data/Whh.gz").astype(np.float32))
-        Why.assign(np.loadtxt(os.getcwd()+"/data/Why.gz").astype(np.float32))
-        bh.assign(np.loadtxt(os.getcwd()+"/data/bh.gz").astype(np.float32))
-        by.assign(np.loadtxt(os.getcwd()+"/data/by.gz").astype(np.float32))
+
+        Wxh = tf.get_variable("Wxh", [vocab_size, hidden_size], initializer=initializer)
+        Whh = tf.get_variable("Whh", [hidden_size, hidden_size], initializer=initializer)
+        Why = tf.get_variable("Why", [hidden_size, vocab_size], initializer=initializer)
+        bh  = tf.get_variable("bh", [hidden_size], initializer=initializer)
+        by  = tf.get_variable("by", [vocab_size], initializer=initializer)
+
+        Wxh_a = Wxh.assign(Wxh_p)
+        Whh_a = Whh.assign(Whh_p)
+        Why_a = Why.assign(Why_p)
+        bh_a = bh.assign(bh_p)
+        by_a = by.assign(by_p)
 
         hs_t = tf.tanh(tf.matmul(xs_t, Wxh) + tf.matmul(hs_t, Whh) + bh)
         ys_t = tf.matmul(hs_t, Why) + by
@@ -80,6 +85,7 @@ sess.run(init)
 n, p = 0, 0
 hprev_val = np.zeros([1, hidden_size])
 
+
 # Initialize
 if p + seq_length + 1 >= len(data) or n == 0:
     hprev_val = np.zeros([1, hidden_size])
@@ -93,12 +99,19 @@ input_vals  = one_hot(input_vals)
 target_vals = one_hot(target_vals)
 
 
+# Import weights + bias
+sess.run(Wxh_a, feed_dict={Wxh_p: np.loadtxt(os.getcwd()+"/data/Wxh.gz").astype(np.float32)})
+sess.run(Whh_a, feed_dict={Whh_p: np.loadtxt(os.getcwd()+"/data/Whh.gz").astype(np.float32)})
+sess.run(Why_a, feed_dict={Why_p: np.loadtxt(os.getcwd()+"/data/Why.gz").astype(np.float32)})
+sess.run(bh_a, feed_dict={bh_p: np.loadtxt(os.getcwd()+"/data/bh.gz").astype(np.float32)})
+sess.run(by_a, feed_dict={by_p: np.loadtxt(os.getcwd()+"/data/by.gz").astype(np.float32)})
+
+
 hprev_val, loss_val, _ = sess.run([hprev, loss, updates],
                                   feed_dict={inputs: input_vals,
                                              targets: target_vals,
                                              init_state: hprev_val})
 
-# hprev_val = np.loadtxt(os.getcwd()+"/data/hprev_val.gz").reshape(1,100)
 print loss_val
 
 # Do sampling
