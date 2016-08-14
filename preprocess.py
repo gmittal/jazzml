@@ -34,6 +34,6 @@ data_ix = []
 for index in range(0, len(data)):
     data_ix.append(vocab.index(data[index]))
 
-os.makedirs(os.getcwd()+"/data/datasets/preprocessed/"+datasetName)
-np.savetxt(os.getcwd()+"/data/datasets/preprocessed/"+datasetName+"/vocab.gz", vocab)
-np.savetxt(os.getcwd()+"/data/datasets/preprocessed/"+datasetName+"/dataset.gz", data_ix)
+os.makedirs(os.getcwd()+"/data/datasets/"+datasetName)
+np.savetxt(os.getcwd()+"/data/datasets/"+datasetName+"/vocab.gz", vocab)
+np.savetxt(os.getcwd()+"/data/datasets/"+datasetName+"/data.gz", data_ix)
