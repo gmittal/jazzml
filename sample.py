@@ -2,6 +2,7 @@ import random
 import numpy as np
 import tensorflow as tf
 import os
+import argparse
 
 seed_value = 42
 tf.set_random_seed(seed_value)
@@ -10,7 +11,14 @@ random.seed(seed_value)
 def one_hot(v):
     return np.eye(vocab_size)[v]
 
-data = list(np.loadtxt("data/increasing_numbers_dataset.gz")) # import dataset
+# Get command line arguments
+parser = argparse.ArgumentParser(description='Train: Trains an LSTM model.')
+parser.add_argument('data', action="store", type=str)
+
+# Grab the compressed file contents
+filePath = os.getcwd() + "/" + parser.parse_args().data
+
+data = list(np.loadtxt(filePath+"/data.gz")) # import dataset
 chars = sorted(list(set(data)))
 data_size, vocab_size = len(data), len(chars)
 print('Data has %d characters, %d unique.' % (data_size, vocab_size))
@@ -100,11 +108,11 @@ target_vals = one_hot(target_vals)
 
 
 # Import weights + bias
-sess.run(Wxh_a, feed_dict={Wxh_p: np.loadtxt(os.getcwd()+"/data/Wxh.gz").astype(np.float32)})
-sess.run(Whh_a, feed_dict={Whh_p: np.loadtxt(os.getcwd()+"/data/Whh.gz").astype(np.float32)})
-sess.run(Why_a, feed_dict={Why_p: np.loadtxt(os.getcwd()+"/data/Why.gz").astype(np.float32)})
-sess.run(bh_a, feed_dict={bh_p: np.loadtxt(os.getcwd()+"/data/bh.gz").astype(np.float32)})
-sess.run(by_a, feed_dict={by_p: np.loadtxt(os.getcwd()+"/data/by.gz").astype(np.float32)})
+sess.run(Wxh_a, feed_dict={Wxh_p: np.loadtxt(os.getcwd()+"/data/Wxh.txt").astype(np.float32)})
+sess.run(Whh_a, feed_dict={Whh_p: np.loadtxt(os.getcwd()+"/data/Whh.txt").astype(np.float32)})
+sess.run(Why_a, feed_dict={Why_p: np.loadtxt(os.getcwd()+"/data/Why.txt").astype(np.float32)})
+sess.run(bh_a, feed_dict={bh_p: np.loadtxt(os.getcwd()+"/data/bh.txt").astype(np.float32)})
+sess.run(by_a, feed_dict={by_p: np.loadtxt(os.getcwd()+"/data/by.txt").astype(np.float32)})
 
 
 hprev_val, loss_val, _ = sess.run([hprev, loss, updates],
