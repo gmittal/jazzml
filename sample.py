@@ -108,11 +108,11 @@ target_vals = one_hot(target_vals)
 
 
 # Import weights + bias
-sess.run(Wxh_a, feed_dict={Wxh_p: np.loadtxt(os.getcwd()+"/data/Wxh.txt").astype(np.float32)})
-sess.run(Whh_a, feed_dict={Whh_p: np.loadtxt(os.getcwd()+"/data/Whh.txt").astype(np.float32)})
-sess.run(Why_a, feed_dict={Why_p: np.loadtxt(os.getcwd()+"/data/Why.txt").astype(np.float32)})
-sess.run(bh_a, feed_dict={bh_p: np.loadtxt(os.getcwd()+"/data/bh.txt").astype(np.float32)})
-sess.run(by_a, feed_dict={by_p: np.loadtxt(os.getcwd()+"/data/by.txt").astype(np.float32)})
+sess.run(Wxh_a, feed_dict={Wxh_p: np.loadtxt(os.getcwd()+"/data/Wxh.gz").astype(np.float32)})
+sess.run(Whh_a, feed_dict={Whh_p: np.loadtxt(os.getcwd()+"/data/Whh.gz").astype(np.float32)})
+sess.run(Why_a, feed_dict={Why_p: np.loadtxt(os.getcwd()+"/data/Why.gz").astype(np.float32)})
+sess.run(bh_a, feed_dict={bh_p: np.loadtxt(os.getcwd()+"/data/bh.gz").astype(np.float32)})
+sess.run(by_a, feed_dict={by_p: np.loadtxt(os.getcwd()+"/data/by.gz").astype(np.float32)})
 
 
 hprev_val, loss_val, _ = sess.run([hprev, loss, updates],

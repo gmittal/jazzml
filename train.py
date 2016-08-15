@@ -15,11 +15,9 @@ def one_hot(v):
 # Get command line arguments
 parser = argparse.ArgumentParser(description='Train: Trains an LSTM model.')
 parser.add_argument('data', action="store", type=str)
-parser.add_argument('epochs', action="store", type=int)
 
 # Grab the compressed file contents
 filePath = os.getcwd() + "/" + parser.parse_args().data
-numEpochs = parser.parse_args().epochs
 
 # Data I/O
 data = np.loadtxt(filePath+"/data.gz")
@@ -87,7 +85,7 @@ sess.run(init)
 n, p = 0, 0
 hprev_val = np.zeros([1, hidden_size])
 
-while n <= numEpochs:
+while True:
     # Initialize
     if p + seq_length + 1 >= len(data) or n == 0:
         hprev_val = np.zeros([1, hidden_size])
@@ -106,13 +104,23 @@ while n <= numEpochs:
                                                  init_state: hprev_val})
 
     if loss_val < bestLoss:
-        bestLoss = loss_val
-        # save everything
-        np.savetxt(os.getcwd()+"/data/Wxh.txt", Wxh.eval(session=sess))
-        np.savetxt(os.getcwd()+"/data/Whh.txt", Whh.eval(session=sess))
-        np.savetxt(os.getcwd()+"/data/Why.txt", Why.eval(session=sess))
-        np.savetxt(os.getcwd()+"/data/bh.txt", bh.eval(session=sess))
-        np.savetxt(os.getcwd()+"/data/by.txt", by.eval(session=sess))
+        try:
+            bestLoss = loss_val
+            # save everything
+            np.savetxt(os.getcwd()+"/data/Wxh.gz", Wxh.eval(session=sess))
+            np.savetxt(os.getcwd()+"/data/Whh.gz", Whh.eval(session=sess))
+            np.savetxt(os.getcwd()+"/data/Why.gz", Why.eval(session=sess))
+            np.savetxt(os.getcwd()+"/data/bh.gz", bh.eval(session=sess))
+            np.savetxt(os.getcwd()+"/data/by.gz", by.eval(session=sess))
+        except KeyboardInterrupt:
+            bestLoss = loss_val
+            # save everything
+            np.savetxt(os.getcwd()+"/data/Wxh.gz", Wxh.eval(session=sess))
+            np.savetxt(os.getcwd()+"/data/Whh.gz", Whh.eval(session=sess))
+            np.savetxt(os.getcwd()+"/data/Why.gz", Why.eval(session=sess))
+            np.savetxt(os.getcwd()+"/data/bh.gz", bh.eval(session=sess))
+            np.savetxt(os.getcwd()+"/data/by.gz", by.eval(session=sess))
+            raise SystemExit
 
     if n % 100 == 0:
         # Progress
