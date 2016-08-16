@@ -114,6 +114,7 @@ while True:
             np.savetxt(os.getcwd()+"/data/by.gz", by.eval(session=sess))
         except KeyboardInterrupt:
             bestLoss = loss_val
+            print "Loss: " + str(bestLoss)
             # save everything
             np.savetxt(os.getcwd()+"/data/Wxh.gz", Wxh.eval(session=sess))
             np.savetxt(os.getcwd()+"/data/Whh.gz", Whh.eval(session=sess))
