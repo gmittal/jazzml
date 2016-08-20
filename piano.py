@@ -6,10 +6,11 @@ from music21 import *
 from mingus.containers import Note
 from mingus.midi import fluidsynth
 import simplejson as json
+import time
 
 fluidsynth.init(os.getcwd() + "/soundfonts/piano.sf2")
 
-bpm = 300
+bpm = 240
 noteFrequencies = []
 noteNamesWithSharps = ["C", "C#", "D", "D#", "E", "E#", "F#", "G", "G#", "A", "A#", "B"]
 noteNamesWithFlats = ["C", "Db", "D", "Eb", "Fb", "F", "Gb", "G", "Ab", "A", "Bb", "Cb"]
@@ -47,12 +48,32 @@ def mapFreq(note):
 
 def playNote(note, beats):
     seconds = beats*60/bpm
-    fluidsynth.play_Note(Note("Bb-5"))
+    n = Note(note+"-5")
+    fluidsynth.play_Note(n)
+    time.sleep(seconds);
+    fluidsynth.stop_Note(n)
     # freq = mapFreq(note)
     # s = sig(freq, seconds)
     # play(s)
-playNote("C", 10)
-
+playNote("D", 0.5)
+playNote("E", 0.5)
+playNote("F", 0.5)
+playNote("G", 0.5)
+playNote("E", 1)
+playNote("C", 0.5)
+playNote("D", 0.5)
+playNote("E", 0.5)
+playNote("F", 0.5)
+playNote("G", 0.5)
+playNote("E", 1)
+playNote("C", 0.5)
+playNote("D", 0.5)
+playNote("E", 0.5)
+playNote("F", 0.5)
+playNote("G", 0.5)
+playNote("E", 1)
+playNote("C", 0.5)
+playNote("D", 2)
 
 f = open(os.getcwd()+"/data/currentChord.txt", "r").read()
 q = f.split(" ")[1]
