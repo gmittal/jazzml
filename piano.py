@@ -9,21 +9,6 @@ import simplejson as json
 
 fluidsynth.init(os.getcwd() + "/soundfonts/piano.sf2")
 
-raw_dataset = open("data/lick.json", "r").read()
-print raw_dataset
-dataset = json.loads(raw_dataset)["data"]
-
-def lst_set(lst):
-    last = object()
-    lst = sorted(lst, reverse=True)
-    for item in lst:
-        if item == last:
-            continue
-        yield item
-        last = item
-
-print list(lst_set(dataset))
-
 bpm = 300
 noteFrequencies = []
 noteNamesWithSharps = ["C", "C#", "D", "D#", "E", "E#", "F#", "G", "G#", "A", "A#", "B"]
@@ -62,9 +47,11 @@ def mapFreq(note):
 
 def playNote(note, beats):
     seconds = beats*60/bpm
-    freq = mapFreq(note)
-    s = sig(freq, seconds)
-    play(s)
+    fluidsynth.play_Note(Note("Bb-5"))
+    # freq = mapFreq(note)
+    # s = sig(freq, seconds)
+    # play(s)
+playNote("C", 10)
 
 
 f = open(os.getcwd()+"/data/currentChord.txt", "r").read()

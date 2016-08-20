@@ -125,7 +125,7 @@ print loss_val
 # print list(vocab)
 
 # Do sampling
-sample_length = 20
+sample_length = 40
 start_ix      = 0
 sample_seq_ix = [char_to_ix[ch] for ch in data[start_ix:start_ix + seq_length]]
 ixes          = []
@@ -145,7 +145,7 @@ txt = list(txt)
 new_results = []
 print txt
 for x in range(0, len(txt)):
-    # print vocab[int(txt[x])]
+    print vocab[int(txt[x])]
     pass
 
 p += seq_length
