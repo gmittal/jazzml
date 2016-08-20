@@ -37,3 +37,4 @@ for index in range(0, len(data)):
 os.makedirs(os.getcwd()+"/data/datasets/"+datasetName)
 np.savetxt(os.getcwd()+"/data/datasets/"+datasetName+"/vocab.gz", vocab)
 np.savetxt(os.getcwd()+"/data/datasets/"+datasetName+"/data.gz", data_ix)
+print data_ix

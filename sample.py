@@ -4,7 +4,7 @@ import tensorflow as tf
 import os
 import argparse
 
-seed_value = 42
+seed_value = 1
 tf.set_random_seed(seed_value)
 random.seed(seed_value)
 
@@ -12,13 +12,14 @@ def one_hot(v):
     return np.eye(vocab_size)[v]
 
 # Get command line arguments
-parser = argparse.ArgumentParser(description='Train: Trains an LSTM model.')
+parser = argparse.ArgumentParser(description='Samples the LSTM model based on results from train.py')
 parser.add_argument('data', action="store", type=str)
 
 # Grab the compressed file contents
 filePath = os.getcwd() + "/" + parser.parse_args().data
 
-data = list(np.loadtxt(filePath+"/data.gz")) # import dataset
+data = [ int(x) for x in np.loadtxt(filePath+"/data.gz") ]# import dataset
+vocab = np.loadtxt(filePath+"/vocab.gz")
 chars = sorted(list(set(data)))
 data_size, vocab_size = len(data), len(chars)
 print('Data has %d characters, %d unique.' % (data_size, vocab_size))
@@ -28,7 +29,7 @@ bestLoss = 1e10; # anything has to be better than an arbitrarily large number
 
 # Hyper-parameters
 hidden_size   = 100  # hidden layer's size
-seq_length    = 25   # number of steps to unroll
+seq_length    = 50   # number of steps to unroll
 learning_rate = 1e-1
 
 inputs     = tf.placeholder(shape=[None, vocab_size], dtype=tf.float32, name="inputs")
@@ -121,9 +122,10 @@ hprev_val, loss_val, _ = sess.run([hprev, loss, updates],
                                              init_state: hprev_val})
 
 print loss_val
+# print list(vocab)
 
 # Do sampling
-sample_length = 200
+sample_length = 20
 start_ix      = 0
 sample_seq_ix = [char_to_ix[ch] for ch in data[start_ix:start_ix + seq_length]]
 ixes          = []
@@ -140,7 +142,11 @@ for t in range(sample_length):
 
 txt = (ix_to_char[ix] for ix in ixes)
 txt = list(txt)
-print('----\n %s \n----\n' % (sample_seq_ix,))
+new_results = []
+print txt
+for x in range(0, len(txt)):
+    # print vocab[int(txt[x])]
+    pass
 
 p += seq_length
 n += 1

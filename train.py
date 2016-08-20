@@ -4,7 +4,7 @@ import tensorflow as tf
 import os
 import argparse
 
-seed_value = 42
+seed_value = 1
 tf.set_random_seed(seed_value)
 random.seed(seed_value)
 
@@ -20,7 +20,7 @@ parser.add_argument('data', action="store", type=str)
 filePath = os.getcwd() + "/" + parser.parse_args().data
 
 # Data I/O
-data = np.loadtxt(filePath+"/data.gz")
+data = [ int(x) for x in np.loadtxt(filePath+"/data.gz") ]
 chars = sorted(list(set(data)))
 data_size, vocab_size = len(data), len(chars)
 print('Data has %d characters, %d unique.' % (data_size, vocab_size))
@@ -30,7 +30,7 @@ bestLoss = 1e10
 
 # Hyper-parameters
 hidden_size   = 100  # hidden layer's size
-seq_length    = 25   # number of steps to unroll
+seq_length    = 50   # number of steps to unroll
 learning_rate = 1e-1
 
 inputs     = tf.placeholder(shape=[None, vocab_size], dtype=tf.float32, name="inputs")
@@ -128,8 +128,8 @@ while True:
         print('iter: %d, p: %d, loss: %f, best_loss: %f' % (n, p, loss_val, bestLoss))
 
         # Do sampling
-        sample_length = 200
-        start_ix      = 0 #random.randint(0, len(data) - seq_length)
+        sample_length = 20
+        start_ix      = random.randint(0, len(data) - seq_length)
         sample_seq_ix = [char_to_ix[ch] for ch in data[start_ix:start_ix + seq_length]]
         ixes          = []
         sample_prev_state_val = np.copy(hprev_val)
@@ -145,7 +145,8 @@ while True:
             sample_seq_ix = sample_seq_ix[1:] + [ix]
 
         txt = list(ix_to_char[ix] for ix in ixes)
-        # print('----\n %s \n----\n' % (txt,))
+        print data
+        print('----\n %s \n----\n' % (txt,))
 
     p += seq_length
     n += 1
