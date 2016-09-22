@@ -1,3 +1,7 @@
+# Samples from the LSTM given weights from a training directory
+# $ python sample.py --> Data size, vocab size and loss given LSTM weights
+# import sample --> sample.sample(SAMPLE_LENGTH, START_INDEX) returns a list of vocabulary objects given LSTM predictions
+
 import random
 import numpy as np
 import tensorflow as tf
@@ -12,8 +16,9 @@ def one_hot(v):
     return np.eye(vocab_size)[v]
 
 # Get command line arguments
+default_val = "data/datasets/jazzyvibes" # Assume defaults if sampling without arguments
 parser = argparse.ArgumentParser(description='Samples the LSTM model based on results from train.py')
-parser.add_argument('data', action="store", type=str)
+parser.add_argument('--data', action="store", default=default_val, type=str)
 
 # Grab the compressed file contents
 filePath = os.getcwd() + "/" + parser.parse_args().data
@@ -125,28 +130,27 @@ print loss_val
 # print list(vocab)
 
 # Do sampling
-sample_length = 40
-start_ix      = 0
-sample_seq_ix = [char_to_ix[ch] for ch in data[start_ix:start_ix + seq_length]]
-ixes          = []
-sample_prev_state_val = np.copy(hprev_val)
+def sample(sample_length, start_ix,): # For testing purposes, use sample(40, 0)
+    sample_seq_ix = [char_to_ix[ch] for ch in data[start_ix:start_ix + seq_length]]
+    ixes          = []
+    sample_prev_state_val = np.copy(hprev_val)
+    
+    for t in range(sample_length):
+        sample_input_vals = one_hot(sample_seq_ix)
+        sample_output_softmax_val, sample_prev_state_val = sess.run([output_softmax, hprev], feed_dict={inputs: sample_input_vals, init_state: sample_prev_state_val})
+        
+        ix = np.random.choice(range(vocab_size), p=sample_output_softmax_val.ravel())
+        
+        ixes.append(ix)
+        sample_seq_ix = sample_seq_ix[1:] + [ix]
 
-for t in range(sample_length):
-    sample_input_vals = one_hot(sample_seq_ix)
-    sample_output_softmax_val, sample_prev_state_val = sess.run([output_softmax, hprev], feed_dict={inputs: sample_input_vals, init_state: sample_prev_state_val})
+    txt = (ix_to_char[ix] for ix in ixes)
+    txt = list(txt) # Sequence returned by the LSTM
+    new_results = []
 
-    ix = np.random.choice(range(vocab_size), p=sample_output_softmax_val.ravel())
-
-    ixes.append(ix)
-    sample_seq_ix = sample_seq_ix[1:] + [ix]
-
-txt = (ix_to_char[ix] for ix in ixes)
-txt = list(txt)
-new_results = []
-print txt
-for x in range(0, len(txt)):
-    print vocab[int(txt[x])]
-    pass
+    # Convert sequence indices back into notes
+    for x in range(0, len(txt)):
+        print vocab[int(txt[x])]
 
 p += seq_length
 n += 1

@@ -2,4 +2,6 @@
 currentChord.txt
 venv
 *.pyc
+*.py~
+*.md~
 .DS_Store
