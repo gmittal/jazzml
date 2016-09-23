@@ -145,8 +145,8 @@ while True:
             sample_seq_ix = sample_seq_ix[1:] + [ix]
 
         txt = list(ix_to_char[ix] for ix in ixes)
-        print data
-        print('----\n %s \n----\n' % (txt,))
+        # print data
+        # print('----\n %s \n----\n' % (txt,))
 
     p += seq_length
     n += 1

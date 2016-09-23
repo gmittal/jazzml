@@ -130,7 +130,7 @@ print loss_val
 # print list(vocab)
 
 # Do sampling
-def sample(sample_length, start_ix,): # For testing purposes, use sample(40, 0)
+def sample(sample_length, start_ix): # For testing purposes, use sample(40, 0)
     sample_seq_ix = [char_to_ix[ch] for ch in data[start_ix:start_ix + seq_length]]
     ixes          = []
     sample_prev_state_val = np.copy(hprev_val)
