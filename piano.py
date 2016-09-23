@@ -14,7 +14,7 @@ bpm = 240
 noteFrequencies = []
 noteNamesWithSharps = ["C", "C#", "D", "D#", "E", "E#", "F#", "G", "G#", "A", "A#", "B"]
 noteNamesWithFlats = ["C", "Db", "D", "Eb", "Fb", "F", "Gb", "G", "Ab", "A", "Bb", "Cb"]
-referenceFrequency = referenceFrequency = 130.81278265*4 # C
+referenceFrequency = 130.81278265*4 # C
 
 for i in range(0, 12):
     noteFrequencies.append(referenceFrequency*math.pow(2, i/12))
