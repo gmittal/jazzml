@@ -150,7 +150,10 @@ def sample(sample_length, start_ix): # For testing purposes, use sample(40, 0)
 
     # Convert sequence indices back into notes
     for x in range(0, len(txt)):
-        print vocab[int(txt[x])]
+        new_results.append(vocab[int(txt[x])])
+        # print vocab[int(txt[x])]
 
+    return new_results
+        
 p += seq_length
 n += 1

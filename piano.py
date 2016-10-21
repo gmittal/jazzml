@@ -1,12 +1,10 @@
 from __future__ import division
-import os, math
+import os, math, time, numpy as np, simplejson as json
 from random import randint
-import numpy as np
 from music21 import *
 from mingus.containers import Note
 from mingus.midi import fluidsynth
-import simplejson as json
-import time
+import sample as lstm # Import improv predictions
 
 fluidsynth.init(os.getcwd() + "/soundfonts/piano.sf2")
 
@@ -52,30 +50,14 @@ def playNote(note, beats):
     fluidsynth.play_Note(n)
     time.sleep(seconds);
     fluidsynth.stop_Note(n)
-    # freq = mapFreq(note)
-    # s = sig(freq, seconds)
-    # play(s)
-playNote("D", 0.5)
-playNote("E", 0.5)
-playNote("F", 0.5)
-playNote("G", 0.5)
-playNote("E", 1)
-playNote("C", 0.5)
-playNote("D", 0.5)
-playNote("E", 0.5)
-playNote("F", 0.5)
-playNote("G", 0.5)
-playNote("E", 1)
-playNote("C", 0.5)
-playNote("D", 0.5)
-playNote("E", 0.5)
-playNote("F", 0.5)
-playNote("G", 0.5)
-playNote("E", 1)
-playNote("C", 0.5)
-playNote("D", 2)
 
+    
 f = open(os.getcwd()+"/data/currentChord.txt", "r").read()
 q = f.split(" ")[1]
 c = f.split(" ")[0]
 s = getImprovScale(q, c)["scale"]
+print s
+output = lstm.sample(40, 1);
+
+for note in output:
+    playNote(s[int(note[0])], note[1])
