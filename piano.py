@@ -8,6 +8,7 @@ import sample as lstm # Import improv predictions
 
 fluidsynth.init(os.getcwd() + "/soundfonts/piano.sf2")
 
+lastNotePlayed = None
 bpm = 240
 noteFrequencies = []
 noteNamesWithSharps = ["C", "C#", "D", "D#", "E", "E#", "F#", "G", "G#", "A", "A#", "B"]
@@ -44,14 +45,27 @@ def mapFreq(note):
         freq = noteFrequencies[noteNamesWithFlats.index(note)]
     return freq
 
-def playNote(note, beats):
+def playNote(note, beats, scale):
     seconds = beats*60/bpm
-    n = Note(note+"-5")
-    fluidsynth.play_Note(n)
-    time.sleep(seconds);
-    fluidsynth.stop_Note(n)
+    if scale == None:
+        n = Note(note+"-5")
+        fluidsynth.play_Note(n)
+        time.sleep(seconds);
+        fluidsynth.stop_Note(n)
+    else:
+        lastIndex = scale.index(lastNotePlayed)
+        currentIndex = scale.index(note)
+        if (currentIndex > lastIndex):
+            n = Note(note+"-6")
+            fluidsynth.play_Note(n)
+            time.sleep(seconds);
+            fluidsynth.stop_Note(n)
+        else:
+            playNote(note, beats, None)
 
-    
+    lastNotePlayed = note
+
+
 f = open(os.getcwd()+"/data/currentChord.txt", "r").read()
 q = f.split(" ")[1]
 c = f.split(" ")[0]
@@ -60,4 +74,4 @@ print s
 output = lstm.sample(40, 1);
 
 for note in output:
-    playNote(s[int(note[0])], note[1])
+    playNote(s[int(note[0])], note[1], None)

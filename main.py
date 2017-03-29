@@ -1,4 +1,5 @@
 import sys, os, threading, subprocess
+sys.path.append('util')
 import atexit
 import pyaudio
 import numpy as np
@@ -24,7 +25,7 @@ def updateChordFile(symbol, quality):
     f.close()
 
 def findObjects(array, value):
-    ix = []
+    ix =[]
     for i in range(0, len(array)):
         if array[i] == value:
             ix.append(i)
@@ -45,7 +46,7 @@ def getImprovScale(chord, symbol):
     return {'name': scales.name, 'scale': allNoteNames}
 
 class MicrophoneRecorder(object):
-    def __init__(self, rate=2000, chunksize=1024):
+    def __init__(self, rate=2000, chunksize=2**12):
         self.rate = rate
         self.chunksize = chunksize
         self.p = pyaudio.PyAudio()
@@ -88,7 +89,6 @@ class MplFigure(object):
     def __init__(self, parent):
         self.figure = plt.figure(facecolor='white')
         self.canvas = FigureCanvas(self.figure)
-        self.toolbar = NavigationToolbar(self.canvas, parent)
 
 class LiveFFTWidget(QtGui.QWidget):
     def __init__(self):
@@ -134,13 +134,11 @@ class LiveFFTWidget(QtGui.QWidget):
                                                np.ones_like(self.freq_vect))
 
 
+    # handles the asynchroneously collected sound chunks
     def handleNewData(self):
-        """ handles the asynchroneously collected sound chunks """
-        # gets the latest frames
         frames = self.mic.get_frames()
 
         if len(frames) > 0:
-            # keeps only the last frame
             current_frame = frames[-1]
 
             # get 12x1 chroma vector with respective energies for each note
@@ -156,17 +154,14 @@ class LiveFFTWidget(QtGui.QWidget):
             improvScale = getImprovScale(chordFinder, chordString)
             updateChordFile(chordString, chordFinder.quality)
 
+            print improvScale['scale']
+
             # plots the time signal
             self.line_top.set_data(self.time_vect, current_frame)
 
-            # computes and plots the fft signal
             fft_frame = np.fft.rfft(current_frame)
-            # if self.autoGainCheckBox.checkState() == QtCore.Qt.Checked:
             fft_frame /= np.abs(fft_frame).max()
-                #print(np.abs(fft_frame).max())
             self.line_bottom.set_data(self.freq_vect, np.abs(fft_frame))
-
-            # refreshes the plots
             self.main_figure.canvas.draw()
 
 
