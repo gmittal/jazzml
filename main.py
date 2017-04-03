@@ -1,43 +1,34 @@
-import sys, os, threading, subprocess
+# Joey Alexander
+# Built by Gautam Mittal (2017)
+# Real-time chord detection and improvisation software that uses Fast Fourier Transforms, DSP, and machine learning
+
+import sys
 sys.path.append('util')
-import atexit
-import pyaudio
-import numpy as np
-import matplotlib.pyplot as plt
 from PyQt4 import QtGui, QtCore
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as NavigationToolbar
-import chords
 from music21 import *
-import peakutils
+import os, threading, subprocess, numpy as np, atexit, pyaudio, matplotlib.pyplot as plt, chords, peakutils#,piano
 
+global CURRENT_CHORD
 chordFinder = chords.ChordDetector()
-chordQualities = ["min", "maj", "sus", "", "-", "+"]
-chordRoots = ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"]
+chordQualities = chords.qualities
+chordRoots = chords.noteNames
 
-def getChordTones(chordSymbol):
+def chordTones(chordSymbol):
     return eval(os.popen('./util/chordScale "'+chordSymbol+'"').read())
 
-def updateChordFile(symbol, quality):
-    f = open(os.getcwd()+"/data/currentChord.txt", "w")
-    f.write(symbol)
-    f.write(" "+str(quality))
-    f.close()
-
 def findObjects(array, value):
-    ix =[]
-    for i in range(0, len(array)):
-        if array[i] == value:
-            ix.append(i)
+    ix = [i for i in range(0, len(array)) if array[i] == value]
     return ix
 
-def getImprovScale(chord, symbol):
+def improvisationScale(chord, symbol):
     scaleType = scale.DorianScale()
     if chord.quality == 1:
         scaleType = scale.MajorScale()
     elif chord.quality == 3:
         scaleType = scale.MixolydianScale()
-    tones = getChordTones(symbol)
+    tones = chordTones(symbol)
     for t in range(0, len(tones)):
         tones[t] = tones[t].replace('b', '-')
     scales = scaleType.derive(tones)
@@ -45,6 +36,7 @@ def getImprovScale(chord, symbol):
     allNoteNames = [i.name for i in allPitches]
     return {'name': scales.name, 'scale': allNoteNames}
 
+# Record audio in real-time for chord detection
 class MicrophoneRecorder(object):
     def __init__(self, rate=2000, chunksize=2**12):
         self.rate = rate
@@ -151,10 +143,15 @@ class LiveFFTWidget(QtGui.QWidget):
             else:
                 chordString = str(chordRoots[chordFinder.rootNote]) + str(chordQualities[chordFinder.quality])
 
-            improvScale = getImprovScale(chordFinder, chordString)
-            updateChordFile(chordString, chordFinder.quality)
+            improvScale = improvisationScale(chordFinder, chordString)
+            CURRENT_CHORD = {
+                'chord': chordString,
+                'root': chordRoots[chordFinder.rootNote],
+                'quality': chordQualities[chordFinder.quality],
+                'interval': chordFinder.intervals
+            }
 
-            print improvScale['scale']
+            print CURRENT_CHORD
 
             # plots the time signal
             self.line_top.set_data(self.time_vect, current_frame)

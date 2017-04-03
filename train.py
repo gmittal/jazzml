@@ -11,7 +11,6 @@ random.seed(seed_value)
 def one_hot(v):
     return np.eye(vocab_size)[v]
 
-
 # Get command line arguments
 parser = argparse.ArgumentParser(description='Train: Trains an LSTM model.')
 parser.add_argument('data', action="store", type=str)

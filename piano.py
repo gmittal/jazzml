@@ -4,7 +4,7 @@ from random import randint
 from music21 import *
 from mingus.containers import Note
 from mingus.midi import fluidsynth
-import sample as lstm # Import improv predictions
+import sample as lstm
 
 fluidsynth.init(os.getcwd() + "/soundfonts/piano.sf2")
 
