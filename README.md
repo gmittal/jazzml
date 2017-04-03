@@ -3,7 +3,9 @@ Learning cool stuff about computers and jazz improvisation through [1 minute jaz
 
 Real-time jazz improvisation using fast Fourier transforms, digital signal processing (for real-time chord prediction) and machine learning techniques (for musical improvisation).
 
-#### Requirements:
+
+### Installation
+The program requires quite a few dependencies, the most notable being:
   - Python 2.x+
   - fluidsynth
   - music21
@@ -11,6 +13,62 @@ Real-time jazz improvisation using fast Fourier transforms, digital signal proce
   - tensorflow
   - PyAudio 0.2.9
 
+To install all dependencies via ```pip```, simply run the following.
+```none
+$ pip install -r requirements.txt
+```
+
+### Running
+The program attempts to improvise over chord changes that it detects in real-time via the microphone. Running the program without an external backing track doesn't lead to any particularly interesting results.
+
+Running using the (boring and repetitive) defaults:
+
+```none
+$ python main.py
+```
+
+#### Training with Your Own Data
+Create a JSON ```train.json``` file with the following format.
+
+```javascript
+{
+  "data": [
+    [2, 0.5],
+    [3, 0.5],
+    [4, 0.5],
+    [5, 0.5],
+    [3, 1],
+    [1, 0.5],
+    [2, 1]
+  ]
+}
+```
+
+Each element in the data array is a note, expressed with a scale degree and length in terms of beats — where 1 is a quarter note. If you have a better way for expressing these data files or for implementing more complex structure such as varying metres, please file a pull request.
+
+Preprocess the raw ```train.json``` JSON file into a named dataset.
+
+```none
+$ python preprocess.py /path/to/train.json "my_dataset"
+```
+
+Now you can train the LSTM model on your dataset.
+
+```none
+$ python train.py /path/to/my_dataset
+```
+
+After you're done training for as long as you see fit, you can test your dataset was trained properly.
+
+```none
+$ python sample.py /path/to/my_dataset
+```
+
+You can then try it out to see how the machine improvises based on your dataset with the main program:
+
+```none
+$ python main.py
+```
 
 ### License
 The [MIT License](https://tldrlegal.com/license/mit-license#fulltext) (MIT)
