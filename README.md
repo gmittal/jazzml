@@ -55,13 +55,19 @@ $ python preprocess.py /path/to/train.json "my_dataset"
 Now you can train the LSTM model on your dataset.
 
 ```none
-$ python train.py /path/to/my_dataset
+$ python train.py data/datasets/my_dataset
 ```
 
 After you're done training for as long as you see fit, you can test your dataset was trained properly.
 
 ```none
-$ python sample.py /path/to/my_dataset
+$ python sample.py data/datasets/my_dataset
+```
+
+Change the dataset variable in ```sample.py``` to my_dataset:
+
+```python
+dataset = "data/datasets/my_dataset"
 ```
 
 You can then try it out to see how the machine improvises based on your dataset with the main program:

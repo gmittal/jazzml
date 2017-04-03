@@ -12,10 +12,11 @@ random.seed(seed_value)
 def one_hot(v):
     return np.eye(vocab_size)[v]
 
+dataset = "data/datasets/jazzyvibes" # Assume defaults if sampling without arguments
+
 # Get command line arguments
-default_val = "data/datasets/jazzyvibes" # Assume defaults if sampling without arguments
 parser = argparse.ArgumentParser(description='Samples the LSTM model based on results from train.py')
-parser.add_argument('--data', action="store", default=default_val, type=str)
+parser.add_argument('--data', action="store", default=dataset, type=str)
 
 # Grab the compressed file contents
 filePath = os.getcwd() + "/" + parser.parse_args().data
@@ -123,7 +124,7 @@ hprev_val, loss_val, _ = sess.run([hprev, loss, updates],
                                              targets: target_vals,
                                              init_state: hprev_val})
 
-# print "Model Loss: " + loss_val
+print "Model Loss: " + loss_val
 # print list(vocab)
 
 # Do sampling
