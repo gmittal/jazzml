@@ -8,32 +8,30 @@ from PyQt4 import QtGui, QtCore
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as NavigationToolbar
 from music21 import *
-import os, threading, subprocess, numpy as np, atexit, pyaudio, matplotlib.pyplot as plt, chords, peakutils#,piano
+import os, threading, subprocess, numpy as np, atexit, pyaudio, matplotlib.pyplot as plt, chords, peakutils#, piano
 
 global CURRENT_CHORD
 chordFinder = chords.ChordDetector()
 chordQualities = chords.qualities
 chordRoots = chords.noteNames
 
+# Given chord symbol return list of 1, 3, 5, 7 scale degrees ("chord tones")
 def chordTones(chordSymbol):
     return eval(os.popen('./util/chordScale "'+chordSymbol+'"').read())
 
-def findObjects(array, value):
-    ix = [i for i in range(0, len(array)) if array[i] == value]
-    return ix
-
+# Given a chord, find an appropriate scale to use for improvisation
 def improvisationScale(chord, symbol):
+    # Decide on scale type based on common chord-scale conventions
     scaleType = scale.DorianScale()
     if chord.quality == 1:
         scaleType = scale.MajorScale()
     elif chord.quality == 3:
         scaleType = scale.MixolydianScale()
-    tones = chordTones(symbol)
-    for t in range(0, len(tones)):
-        tones[t] = tones[t].replace('b', '-')
-    scales = scaleType.derive(tones)
-    allPitches = scales.getPitches()
-    allNoteNames = [i.name for i in allPitches]
+
+    tones = map(lambda x: x.replace('b', '-'), chordTones(symbol))
+    scales = scaleType.derive(tones) # Find the scale based on the given tones
+    allPitches = scales.getPitches() # Get the assosciated scale degrees
+    allNoteNames = [i.name for i in allPitches] # Turn them into real note names
     return {'name': scales.name, 'scale': allNoteNames}
 
 # Record audio in real-time for chord detection

@@ -1,12 +1,9 @@
 # Samples from the LSTM given weights from a training directory
+
 # $ python sample.py --> Data size, vocab size and loss given LSTM weights
 # import sample --> sample.sample(SAMPLE_LENGTH, START_INDEX) returns a list of vocabulary objects given LSTM predictions
 
-import random
-import numpy as np
-import tensorflow as tf
-import os
-import argparse
+import os, random, numpy as np, tensorflow as tf, argparse
 
 seed_value = 1
 tf.set_random_seed(seed_value)
@@ -27,7 +24,7 @@ data = [ int(x) for x in np.loadtxt(filePath+"/data.gz") ]# import dataset
 vocab = np.loadtxt(filePath+"/vocab.gz")
 chars = sorted(list(set(data)))
 data_size, vocab_size = len(data), len(chars)
-print('Data has %d characters, %d unique.' % (data_size, vocab_size))
+# print('Data has %d characters, %d unique.' % (data_size, vocab_size))
 char_to_ix = {ch: i for i, ch in enumerate(chars)}
 ix_to_char = {i: ch for i, ch in enumerate(chars)}
 bestLoss = 1e10; # anything has to be better than an arbitrarily large number
@@ -134,13 +131,13 @@ def sample(sample_length, start_ix): # For testing purposes, use sample(40, 0)
     sample_seq_ix = [char_to_ix[ch] for ch in data[start_ix:start_ix + seq_length]]
     ixes          = []
     sample_prev_state_val = np.copy(hprev_val)
-    
+
     for t in range(sample_length):
         sample_input_vals = one_hot(sample_seq_ix)
         sample_output_softmax_val, sample_prev_state_val = sess.run([output_softmax, hprev], feed_dict={inputs: sample_input_vals, init_state: sample_prev_state_val})
-        
+
         ix = np.random.choice(range(vocab_size), p=sample_output_softmax_val.ravel())
-        
+
         ixes.append(ix)
         sample_seq_ix = sample_seq_ix[1:] + [ix]
 
@@ -154,6 +151,6 @@ def sample(sample_length, start_ix): # For testing purposes, use sample(40, 0)
         # print vocab[int(txt[x])]
 
     return new_results
-        
+
 p += seq_length
 n += 1

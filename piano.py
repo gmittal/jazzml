@@ -10,13 +10,10 @@ fluidsynth.init(os.getcwd() + "/soundfonts/piano.sf2")
 
 lastNotePlayed = None
 bpm = 240
-noteFrequencies = []
 noteNamesWithSharps = ["C", "C#", "D", "D#", "E", "E#", "F#", "G", "G#", "A", "A#", "B"]
 noteNamesWithFlats = ["C", "Db", "D", "Eb", "Fb", "F", "Gb", "G", "Ab", "A", "Bb", "Cb"]
-referenceFrequency = 130.81278265*4 # C
-
-for i in range(0, 12):
-    noteFrequencies.append(referenceFrequency*math.pow(2, i/12))
+referenceFrequency = 130.81278265*4 # C4
+noteFrequencies = [referenceFrequency*math.pow(2, i/12) for i in range(0, 12)]
 
 def getChordTones(chordSymbol):
     return eval(os.popen('./util/chordScale "'+chordSymbol+'"').read())
@@ -38,11 +35,7 @@ def getImprovScale(quality, symbol):
     return {'name': scales.name, 'scale': allNoteNames}
 
 def mapFreq(note):
-    freq = 800
-    if (note in noteNamesWithSharps):
-        freq = noteFrequencies[noteNamesWithSharps.index(note)]
-    else:
-        freq = noteFrequencies[noteNamesWithFlats.index(note)]
+    freq = noteFrequencies[noteNamesWithSharps.index(note)] if note in noteNamesWithSharps else noteFrequencies[noteNamesWithFlats.index(note)]
     return freq
 
 def playNote(note, beats, scale):

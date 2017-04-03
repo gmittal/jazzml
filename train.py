@@ -1,8 +1,4 @@
-import random
-import numpy as np
-import tensorflow as tf
-import os
-import argparse
+import os, random, numpy as np, tensorflow as tf, os, argparse
 
 seed_value = 1
 tf.set_random_seed(seed_value)
@@ -126,7 +122,7 @@ while True:
         # Progress
         print('iter: %d, p: %d, loss: %f, best_loss: %f' % (n, p, loss_val, bestLoss))
 
-        # Do sampling
+        # Perform sampling
         sample_length = 20
         start_ix      = random.randint(0, len(data) - seq_length)
         sample_seq_ix = [char_to_ix[ch] for ch in data[start_ix:start_ix + seq_length]]

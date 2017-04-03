@@ -6,6 +6,9 @@ Real-time jazz improvisation using fast Fourier transforms, digital signal proce
 #### Requirements:
   - Python 2.x+
   - fluidsynth
+  - music21
+  - mingus
+  - tensorflow
   - PyAudio 0.2.9
 
 
