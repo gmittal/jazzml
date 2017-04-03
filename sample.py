@@ -89,7 +89,7 @@ updates = minimizer.apply_gradients(clipped_grads_and_vars)
 
 # Session
 sess = tf.Session()
-init = tf.initialize_all_variables()
+init = tf.global_variables_initializer()
 sess.run(init)
 
 # Initial values
@@ -123,7 +123,7 @@ hprev_val, loss_val, _ = sess.run([hprev, loss, updates],
                                              targets: target_vals,
                                              init_state: hprev_val})
 
-print loss_val
+# print "Model Loss: " + loss_val
 # print list(vocab)
 
 # Do sampling

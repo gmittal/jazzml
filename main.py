@@ -8,7 +8,7 @@ from PyQt4 import QtGui, QtCore
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as NavigationToolbar
 from music21 import *
-import os, threading, subprocess, numpy as np, atexit, pyaudio, matplotlib.pyplot as plt, chords, peakutils#, piano
+import os, threading, subprocess, numpy as np, atexit, pyaudio, matplotlib.pyplot as plt, chords, peakutils, player
 
 global CURRENT_CHORD
 chordFinder = chords.ChordDetector()

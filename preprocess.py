@@ -1,4 +1,4 @@
-# Simple script to turn JSON data into a numpy array for use with RNN
+# Simple script to turn JSON data into a numpy array for use with LSTM
 # $ python preprocess.py /path/to/data.json datasetName
 
 import argparse
