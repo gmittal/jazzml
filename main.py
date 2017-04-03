@@ -11,7 +11,7 @@ from music21 import *
 import os, threading, subprocess, numpy as np, atexit, pyaudio, matplotlib.pyplot as plt, chords, peakutils, player
 
 # Set up chord detection variables
-global CURRENT_CHORD, CURRENT_SCALE
+global CURRENT_CHORD, CURRENT_SCALE, detection_started
 chordFinder = chords.ChordDetector()
 chordQualities = chords.qualities
 chordRoots = chords.noteNames
@@ -19,6 +19,11 @@ chordRoots = chords.noteNames
 # Set up synthesized instrument
 instrument = player.Player()
 instrument.setBPM(240)
+
+def run():
+    global CURRENT_SCALE
+    while True:
+        instrument.play(CURRENT_SCALE["scale"])
 
 # Given chord symbol return list of 1, 3, 5, 7 scale degrees ("chord tones")
 def chordTones(chordSymbol):
@@ -131,6 +136,8 @@ class LiveFFTWidget(QtGui.QWidget):
 
     # handles the asynchroneously collected sound chunks
     def handleNewData(self):
+        global detection_started, CURRENT_SCALE, CURRENT_CHORD
+
         frames = self.mic.get_frames()
 
         if len(frames) > 0:
@@ -155,7 +162,10 @@ class LiveFFTWidget(QtGui.QWidget):
             }
 
             print CURRENT_CHORD
-            print CURRENT_SCALE
+
+            if detection_started == False:
+                detection_started = True
+                t = threading.Thread(target=run).start()
 
             # plots the time signal
             self.line_top.set_data(self.time_vect, current_frame)
@@ -167,10 +177,7 @@ class LiveFFTWidget(QtGui.QWidget):
 
 
 if __name__ == "__main__":
+    detection_started = False
     app = QtGui.QApplication(sys.argv)
     window = LiveFFTWidget()
     sys.exit(app.exec_())
-
-    instrument.play(CURRENT_SCALE["scale"])
-    instrument.play(CURRENT_SCALE["scale"])
-    instrument.play(CURRENT_SCALE["scale"])
