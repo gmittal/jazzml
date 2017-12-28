@@ -49,7 +49,7 @@ initializer = tf.random_normal_initializer(stddev=0.1)
 with tf.variable_scope("RNN") as scope:
     hs_t = init_state
     ys = []
-    for t, xs_t in enumerate(tf.split(0, seq_length, inputs)):
+    for t, xs_t in enumerate(tf.split(inputs, seq_length, 0)):
         if t > 0: scope.reuse_variables()  # Reuse variables
 
         Wxh = tf.get_variable("Wxh", [vocab_size, hidden_size], initializer=initializer)
@@ -71,8 +71,8 @@ with tf.variable_scope("RNN") as scope:
 hprev = hs_t
 output_softmax = tf.nn.softmax(ys[-1])  # Get softmax for sampling
 
-outputs = tf.concat(0, ys)
-loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(outputs, targets))
+outputs = tf.concat(ys, 0)
+loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=outputs, labels=targets))
 
 # Minimizer
 minimizer = tf.train.AdamOptimizer()
@@ -124,7 +124,7 @@ hprev_val, loss_val, _ = sess.run([hprev, loss, updates],
                                              targets: target_vals,
                                              init_state: hprev_val})
 
-print "Model Loss: " + loss_val
+print "Model Loss: " + str(loss_val)
 # print list(vocab)
 
 # Do sampling
